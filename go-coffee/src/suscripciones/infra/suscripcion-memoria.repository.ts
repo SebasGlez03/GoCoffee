@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { SuscripcionRepository } from '../dominio/suscripcion.repository';
-import { Suscripcion } from 'src/dominio/entidades';
+import { Suscripcion } from '../../dominio/entidades';
 
 @Injectable()
 export class SuscripcionMemoriaRepository implements SuscripcionRepository {

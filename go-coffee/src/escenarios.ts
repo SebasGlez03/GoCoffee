@@ -35,10 +35,10 @@ async function ejecutarEscenarios() {
       1,
       new Date('2026-10-05'),
     );
-    console.log(' STATUS: ✅ ÉXITO');
+    console.log(' STATUS: ÉXITO');
     console.log(' Entrega generada correctamente:', entrega);
   } catch (error: any) {
-    console.error(' STATUS: ❌ ERROR INESPERADO:', error.message);
+    console.error(' STATUS: ERROR INESPERADO:', error.message);
   }
 
   console.log('\n-------------------------------------------------\n');
@@ -57,9 +57,9 @@ async function ejecutarEscenarios() {
       1,
       new Date('2026-10-05'),
     );
-    console.log(' STATUS: ❌ ERROR (Permitió generar entrega en suscripción suspendida)');
+    console.log(' STATUS: ERROR (Permitió generar entrega en suscripción suspendida)');
   } catch (error: any) {
-    console.log(' STATUS: ✅ RECHAZADO POR REGLA DE NEGOCIO');
+    console.log(' STATUS: RECHAZADO POR REGLA DE NEGOCIO');
     console.log(` Error capturado [${error.name}]: ${error.message}`);
   }
   console.log('\n-------------------------------------------------\n');
@@ -75,9 +75,9 @@ async function ejecutarEscenarios() {
 
   try {
     servicioEntregas.validarModificacionEntrega(entregaEnPreparacion);
-    console.log(' STATUS: ❌ ERROR (Permitió modificar una entrega armada)');
+    console.log(' STATUS: ERROR (Permitió modificar una entrega armada)');
   } catch (error: any) {
-    console.log(' STATUS: ✅ RECHAZADO CORRECTAMENTE POR REGLA DE NEGOCIO');
+    console.log(' STATUS: RECHAZADO CORRECTAMENTE POR REGLA DE NEGOCIO');
     console.log(` Error capturado [${error.name}]: ${error.message}`);
   }
 
