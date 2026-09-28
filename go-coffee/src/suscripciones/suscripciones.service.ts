@@ -16,13 +16,13 @@ export class SuscripcionesService {
   }
 
   findAll(): Promise<Suscripcion[]> {
-    return this.findAll();
+    return this.repo.findAll();
   }
 
   async save(dto: CrearSuscripcionDto): Promise<Suscripcion> {
     // TODO: Crear los metodos para verificar los errores, y utilizarlo al momento de crearlo (en este metodo)
     return this.repo.save({
-      fechaInicio: dto.fechaInicio,
+      fechaInicio: new Date(dto.fechaInicio), // WARN: Esto se hizo porque del DTO viene en string, pero hay que revisarlo a fondo.
       estadoSuscripcion: dto.estadoSuscripcion,
       direccionEntrega: dto.direccionEntrega,
       diaSemanaEntrega: dto.diaSemanaEntrega,
