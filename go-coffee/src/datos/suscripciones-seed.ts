@@ -1,4 +1,4 @@
-import { Ciclo, Cobro, DireccionEntrega, Entrega, Suscripcion } from 'src/dominio/entidades';
+import { DireccionEntrega, Cobro, Entrega, Ciclo, Suscripcion } from "../dominio/entidades";
 
 /*
 
@@ -9,6 +9,7 @@ interface PrestamoRepository extends Repository<Prestamo> {
 }
 
 */
+
 
 /*
 idSuscripcion: number;

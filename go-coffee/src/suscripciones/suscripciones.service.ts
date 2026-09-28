@@ -1,8 +1,8 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { SUSCRIPCIONES_REPOSITORY } from './suscripciones.tokens';
 import type { SuscripcionRepository } from './dominio/suscripcion.repository';
-import { Suscripcion } from 'src/dominio/entidades';
 import { CrearSuscripcionDto } from './dto/crear-suscripcion.dto';
+import { Suscripcion } from '../dominio/entidades';
 
 @Injectable()
 export class SuscripcionesService {

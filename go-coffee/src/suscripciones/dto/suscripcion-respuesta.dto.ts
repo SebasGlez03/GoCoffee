@@ -1,5 +1,6 @@
-import { Suscripcion, DireccionEntrega, Ciclo } from 'src/dominio/entidades';
-import { EstadoSuscripcion } from 'src/dominio/tipos';
+import { DireccionEntrega, Ciclo, Suscripcion } from "../../dominio/entidades";
+import { EstadoSuscripcion } from "../../dominio/tipos";
+
 
 export interface SuscripcionResponseDto {
   id: number;

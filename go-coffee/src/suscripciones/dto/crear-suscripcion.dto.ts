@@ -1,5 +1,6 @@
-import { DireccionEntrega, Ciclo } from "src/dominio/entidades";
-import { EstadoSuscripcion } from "src/dominio/tipos";
+import { DireccionEntrega, Ciclo } from "../../dominio/entidades";
+import { EstadoSuscripcion } from "../../dominio/tipos";
+
 
 export interface CrearSuscripcionDto {
   diaSemanaEntrega: string;

@@ -1,5 +1,6 @@
-import { NuevaSuscripcion, Repository } from 'src/dominio/entidades-repo';
-import { Suscripcion } from 'src/dominio/entidades';
+import { Suscripcion } from "../../dominio/entidades";
+import { Repository, NuevaSuscripcion } from "../../dominio/entidades-repo";
+
 
 export interface SuscripcionRepository extends Repository<Suscripcion> {
   findById(id: number): Promise<Suscripcion | null>;
