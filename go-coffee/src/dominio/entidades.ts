@@ -35,7 +35,7 @@ export interface DireccionEntrega {
 
 // TODO: Hay que poner la especificacion de los planes en base al negocio del cafe
 export interface Plan {
-  idPlan: string;
+  idPlan?: number;
   nombre: string;
   cantidadBolsas: number;
   precio: number;
