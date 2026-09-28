@@ -8,3 +8,4 @@ export interface Repository<T, ID = number> {
 }
 
 export type NuevaSuscripcion = Omit<Suscripcion, 'idSuscripcion'>
+
