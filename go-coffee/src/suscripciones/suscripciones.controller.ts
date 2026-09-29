@@ -6,11 +6,14 @@ import {
   HttpCode,
   NotFoundException,
   Param,
+  ParseIntPipe,
   Post,
+  Put,
   Res,
 } from '@nestjs/common';
 import type { Response } from 'express';
 import type { CrearSuscripcionDto } from './dto/crear-suscripcion.dto';
+import type { ModificarSuscripcionDto } from './dto/modificar-suscripcion.dto';
 import { aSuscripcion } from './dto/suscripcion-respuesta.dto';
 import { SuscripcionesService } from './suscripciones.service';
 
@@ -20,8 +23,8 @@ export class SuscripcionesController {
 
   // TODO: Tengo dudas de que puede que este no funcione, porque quizas el @Param se refiere al nombre de el atributo de la entidad, y este esta como idSuscripcion
   @Get(':id')
-  async findById(@Param('id') id: number) {
-    const suscripcion = await this.servicio.findById(Number(id));
+  async findById(@Param('id', ParseIntPipe) id: number) {
+    const suscripcion = await this.servicio.findById(id);
     if (!suscripcion) {
       throw new NotFoundException(
         `No se encontro la suscripcion con el id ${id}`,
@@ -59,5 +62,19 @@ export class SuscripcionesController {
         // TODO: Aqui tambien poner los errores aplicando y validando.
       }
     }
+  }
+
+  @Put(':id')
+  async update(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() dto: ModificarSuscripcionDto,
+  ) {
+    if (id <= 0) {
+      throw new BadRequestException('El ID debe ser un número entero positivo');
+    }
+
+    const dtoConId = { ...dto, id };
+    const suscripcion = await this.servicio.update(dtoConId);
+    return aSuscripcion(suscripcion);
   }
 }

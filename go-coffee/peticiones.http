@@ -24,5 +24,23 @@ Content-Type: {{contentType}}
 ### Obtener suscripción por ID (reemplazar {{id}} con el ID real)
 GET {{baseUrl}}/suscripciones/1
 
+### Actualizar suscripción (reemplazar {{id}} con el ID real)
+PUT {{baseUrl}}/suscripciones/1
+Content-Type: {{contentType}}
+
+{
+  "id": 1,
+  "diaSemanaEntrega": 2,
+  "fechaInicio": "2026-09-28",
+  "direccionEntrega": {
+    "calle": "Av. Secundaria",
+    "codigoPostal": "54321",
+    "numeroCasa": "200",
+    "estado": "JALISCO"
+  },
+  "estadoSuscripcion": "PAUSADA",
+  "ciclos": []
+}
+
 ### Ejemplos de estados válidos para estadoSuscripcion:
 # ACTIVA | PAUSADA | SUSPENDIDA | CANCELADA
