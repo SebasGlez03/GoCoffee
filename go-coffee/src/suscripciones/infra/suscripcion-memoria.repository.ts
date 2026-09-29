@@ -37,5 +37,14 @@ export class SuscripcionMemoriaRepository implements SuscripcionRepository {
     }
   }
 
+  async update(entidad: Suscripcion): Promise<Suscripcion> {
+    const index = this.suscripciones.findIndex((s) => s.idSuscripcion === entidad.idSuscripcion);
+    if (index !== -1) {
+      this.suscripciones[index] = entidad;
+      return entidad;
+    }
+    throw new Error(`Suscripcion con id ${entidad.idSuscripcion} no encontrada`);
+  }
+
   // TODO: No se si debemos de agregar el cancelar como en las versiones que hizo el profe.
 }
