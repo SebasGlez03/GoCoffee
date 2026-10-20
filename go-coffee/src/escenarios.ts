@@ -26,7 +26,6 @@ async function ejecutarEscenarios() {
     ciclos: [],
   };
 
-
   // Generacion normal de entrega para suscripción activa (debería salir bien)
   console.log('- Generación exitosa de entrega -');
   try {
@@ -57,13 +56,14 @@ async function ejecutarEscenarios() {
       1,
       new Date('2026-10-05'),
     );
-    console.log(' STATUS: ERROR (Permitió generar entrega en suscripción suspendida)');
+    console.log(
+      ' STATUS: ERROR (Permitió generar entrega en suscripción suspendida)',
+    );
   } catch (error: any) {
     console.log(' STATUS: RECHAZADO POR REGLA DE NEGOCIO');
     console.log(` Error capturado [${error.name}]: ${error.message}`);
   }
   console.log('\n-------------------------------------------------\n');
-
 
   // Intentar modificar/saltar una entrega en estado ARMADA
   console.log('- Rechazo de cancelación en entrega armada -');
@@ -81,6 +81,64 @@ async function ejecutarEscenarios() {
     console.log(` Error capturado [${error.name}]: ${error.message}`);
   }
 
+  // Generar entrega en suscripcion CANCELADA
+  console.log(`- Rechazo por suscripción cancelada -`);
+  const suscripcionCancelada: Suscripcion = {
+    ...suscripcionActiva,
+    idSuscripcion: 103,
+    estadoSuscripcion: 'CANCELADA',
+  };
+
+  try {
+    await servicioEntregas.generarEntregaCiclo(
+      suscripcionCancelada,
+      1,
+      new Date('2026-10-05'),
+    );
+    console.log(
+      ' STATUS: ERROR (Permitió generar entrega en suscripción cancelada',
+    );
+  } catch (error: any) {
+    console.log(' STATUS: RECHAZADO POR REGLA DE NEGOCIO');
+    console.log(` Error capturado [${error.name}]: ${error.message}`);
+  }
+  console.log('\n-------------------------------------------------\n');
+
+  // Rechazo de entrega duplicada
+  console.log(' - Rechazo de entrega duplicada en el mismo ciclo -');
+  const suscripcionConEntrega: Suscripcion = {
+    ...suscripcionActiva,
+    idSuscripcion: 104,
+    ciclos: [
+      {
+        idCiclo: 1,
+        numCiclo: 2,
+        fechaProgramada: new Date('2026-10-12'),
+        entrega: {
+          idEntrega: 900,
+          fechaProgramada: new Date('2026-10-12'),
+          estadoEntrega: 'PROGRAMADA',
+        },
+        cobro: {
+          idCobro: 900,
+          fechaCobro: new Date('2026-10-12'),
+          estado: 'PAGADO',
+        },
+      },
+    ],
+  };
+
+  try {
+    await servicioEntregas.generarEntregaCiclo(
+      suscripcionConEntrega,
+      2,
+      new Date('2026-10-12'),
+    );
+    console.log(' STATUS: ERROR (Permitió duplicar la entrega del ciclo 2)');
+  } catch (error: any) {
+    console.log(' STATUS: RECHAZADO POR REGLA DE NEGOCIO');
+    console.log(` Error capturado [${error.name}]: ${error.message}`);
+  }
 }
 
 ejecutarEscenarios();

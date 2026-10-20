@@ -5,6 +5,7 @@ import {
   SuscripcionInactivaError,
   EntregaDuplicadaError,
   ModificacionEntregaEnProcesoError,
+  SuscripcionCanceladaError,
 } from './errores';
 
 export class EntregasDominioService {
@@ -15,7 +16,11 @@ export class EntregasDominioService {
     numCiclo: number,
     fechaProgramada: Date,
   ): Promise<Entrega> {
-    // no se generan entregas para suscripciones que no estén activas ('PAUSADA', 'SUSPENDIDA', 'CANCELADA')
+    // no se generan entregas para sscricpiones canceladas.
+    if (suscripcion.estadoSuscripcion == 'CANCELADA') {
+      throw new SuscripcionCanceladaError(suscripcion.idSuscripcion);
+    }
+    // no se generan entregas para suscripciones que no estén activas ('PAUSADA', 'SUSPENDIDA')
     if (suscripcion.estadoSuscripcion !== 'ACTIVA') {
       throw new SuscripcionInactivaError(suscripcion.idSuscripcion);
     }

@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { SuscripcionRepository } from '../dominio/suscripcion.repository';
 import { Suscripcion } from '../../dominio/entidades';
+import { SuscripcionInactivaError } from '../../dominio/errores';
 
 @Injectable()
 export class SuscripcionMemoriaRepository implements SuscripcionRepository {
@@ -43,7 +44,7 @@ export class SuscripcionMemoriaRepository implements SuscripcionRepository {
       this.suscripciones[index] = entidad;
       return entidad;
     }
-    throw new Error(`Suscripcion con id ${entidad.idSuscripcion} no encontrada`);
+    throw new SuscripcionInactivaError(entidad.idSuscripcion);
   }
 
   // TODO: No se si debemos de agregar el cancelar como en las versiones que hizo el profe.

@@ -1,10 +1,8 @@
 import {
-  BadRequestException,
   Body,
   Controller,
   Get,
   HttpCode,
-  NotFoundException,
   Param,
   ParseIntPipe,
   Post,
@@ -16,6 +14,7 @@ import type { CrearSuscripcionDto } from './dto/crear-suscripcion.dto';
 import type { ModificarSuscripcionDto } from './dto/modificar-suscripcion.dto';
 import { aSuscripcion } from './dto/suscripcion-respuesta.dto';
 import { SuscripcionesService } from './suscripciones.service';
+import { SuscripcionNoEncontradaError } from '../dominio/errores';
 
 @Controller('suscripciones')
 export class SuscripcionesController {
@@ -26,9 +25,7 @@ export class SuscripcionesController {
   async findById(@Param('id', ParseIntPipe) id: number) {
     const suscripcion = await this.servicio.findById(id);
     if (!suscripcion) {
-      throw new NotFoundException(
-        `No se encontro la suscripcion con el id ${id}`,
-      );
+      throw new SuscripcionNoEncontradaError(id);
     }
     return aSuscripcion(suscripcion);
   }
@@ -45,23 +42,9 @@ export class SuscripcionesController {
     @Body() dto: CrearSuscripcionDto,
     @Res({ passthrough: true }) res: Response,
   ) {
-    // TODO: Aqui aplica tambien lo de revisar los errores que no estan aplicados y validados.
-    if (!Number.isInteger(dto.diaSemanaEntrega)) {
-      throw new BadRequestException(
-        'El campo diaSemanaEntrega debe de ser un numero entero',
-      );
-    }
-
-    try {
-      const suscripcion = await this.servicio.save(dto);
-      res.setHeader('Location', `/suscripciones/${suscripcion.idSuscripcion}`);
-      return aSuscripcion(suscripcion);
-    } catch (error) {
-      if (error instanceof Error) {
-        throw new Error(error.message);
-        // TODO: Aqui tambien poner los errores aplicando y validando.
-      }
-    }
+    const suscripcion = await this.servicio.save(dto);
+    res.setHeader('Location', `/suscripciones/${suscripcion.idSuscripcion}`);
+    return aSuscripcion(suscripcion);
   }
 
   @Put(':id')
@@ -69,10 +52,6 @@ export class SuscripcionesController {
     @Param('id', ParseIntPipe) id: number,
     @Body() dto: ModificarSuscripcionDto,
   ) {
-    if (id <= 0) {
-      throw new BadRequestException('El ID debe ser un número entero positivo');
-    }
-
     const dtoConId = { ...dto, id };
     const suscripcion = await this.servicio.update(dtoConId);
     return aSuscripcion(suscripcion);
