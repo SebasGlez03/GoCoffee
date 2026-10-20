@@ -2,7 +2,7 @@ import { Inject, Injectable } from '@nestjs/common';
 import { SUSCRIPCIONES_REPOSITORY } from './suscripciones.tokens';
 import type { SuscripcionRepository } from './dominio/suscripcion.repository';
 import { CrearSuscripcionDto } from './dto/crear-suscripcion.dto';
-import { ModificarSuscripcionDto } from './dto/modificar-suscripcion.dto';
+import type { ModificacionSuscripcion } from '../dominio/entidades-repo';
 import { Suscripcion } from '../dominio/entidades';
 import {
   CambioRetroactivoError,
@@ -66,32 +66,35 @@ export class SuscripcionesService {
     }
   }
 
-  async update(dto: ModificarSuscripcionDto): Promise<Suscripcion> {
-    if (!Number.isInteger(dto.id) || dto.id <= 0) {
+  async update(id: number, modificacion: ModificacionSuscripcion): Promise<Suscripcion> {
+    if (!Number.isInteger(id) || id <= 0) {
+      throw new IdInvalidoError();
+    }
+    if (modificacion.idSuscripcion != undefined) {
       throw new IdInvalidoError();
     }
 
-    const suscripcionExistente = await this.repo.findById(dto.id);
+    const suscripcionExistente = await this.repo.findById(id);
     if (!suscripcionExistente) {
-      throw new SuscripcionNoEncontradaError(dto.id);
+      throw new SuscripcionNoEncontradaError(id);
     }
     if (suscripcionExistente.estadoSuscripcion == 'CANCELADA') {
-      throw new SuscripcionCanceladaError(dto.id);
+      throw new SuscripcionCanceladaError(id);
     }
-    if (dto.diaSemanaEntrega != undefined && !dto.diaSemanaEntrega) {
+    if (modificacion.diaSemanaEntrega != undefined && !modificacion.diaSemanaEntrega) {
       throw new DiaSemanaEntregadoVacio();
     }
-    if (dto.direccionEntrega != undefined && !dto.direccionEntrega) {
+    if (modificacion.direccionEntrega != undefined && !modificacion.direccionEntrega) {
       throw new DireccionEntregaVacia();
     }
-    if (dto.estadoSuscripcion != undefined && !dto.estadoSuscripcion) {
+    if (modificacion.estadoSuscripcion != undefined && !modificacion.estadoSuscripcion) {
       throw new EstadoSuscripcionVacio();
     }
-    if (dto.ciclos != undefined && !dto.ciclos) {
+    if (modificacion.ciclos != undefined && !modificacion.ciclos) {
       throw new CiclosSuscripcionesVacios();
     }
-    if (dto.fechaInicio != undefined) {
-      const fecha = new Date(dto.fechaInicio);
+    if (modificacion.fechaInicio != undefined) {
+      const fecha = new Date(modificacion.fechaInicio);
       if (fecha.getTime() < Date.now()) {
         throw new CambioRetroactivoError(fecha);
       }
@@ -99,19 +102,19 @@ export class SuscripcionesService {
 
     const suscripcionActualizada: Suscripcion = {
       ...suscripcionExistente,
-      ...(dto.diaSemanaEntrega !== undefined && {
-        diaSemanaEntrega: dto.diaSemanaEntrega,
+      ...(modificacion.diaSemanaEntrega !== undefined && {
+        diaSemanaEntrega: modificacion.diaSemanaEntrega,
       }),
-      ...(dto.fechaInicio !== undefined && {
-        fechaInicio: new Date(dto.fechaInicio),
+      ...(modificacion.fechaInicio !== undefined && {
+        fechaInicio: new Date(modificacion.fechaInicio),
       }),
-      ...(dto.direccionEntrega !== undefined && {
-        direccionEntrega: dto.direccionEntrega,
+      ...(modificacion.direccionEntrega !== undefined && {
+        direccionEntrega: modificacion.direccionEntrega,
       }),
-      ...(dto.estadoSuscripcion !== undefined && {
-        estadoSuscripcion: dto.estadoSuscripcion,
+      ...(modificacion.estadoSuscripcion !== undefined && {
+        estadoSuscripcion: modificacion.estadoSuscripcion,
       }),
-      ...(dto.ciclos !== undefined && { ciclos: dto.ciclos }),
+      ...(modificacion.ciclos !== undefined && { ciclos: modificacion.ciclos }),
     };
 
     return this.repo.update(suscripcionActualizada);

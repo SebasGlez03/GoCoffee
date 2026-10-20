@@ -5,6 +5,7 @@ import {
   CambioRetroactivoError,
   CiclosSuscripcionesVacios,
   DireccionEntregaVacia,
+  IdInvalidoError,
   SuscripcionCanceladaError,
   SuscripcionNoEncontradaError,
 } from '../dominio/errores';
@@ -70,11 +71,18 @@ describe('SuscripcionesService', () => {
 
   it('rechaza modificar una suscripción cancelada', async () => {
     repoMock.findById.mockResolvedValue({ ...dtoBase, idSuscripcion: 7, estadoSuscripcion: 'CANCELADA' });
-    await expect(service.update({ id: 7 })).rejects.toThrow(SuscripcionCanceladaError);
+    await expect(service.update(7, {})).rejects.toThrow(SuscripcionCanceladaError);
   });
 
   it('rechaza modificar una suscripción inexistente', async () => {
     repoMock.findById.mockResolvedValue(null);
-    await expect(service.update({ id: 999 })).rejects.toThrow(SuscripcionNoEncontradaError);
+    await expect(service.update(999, {})).rejects.toThrow(SuscripcionNoEncontradaError);
+  });
+
+  it('rechaza un body que intente cambiar el idSuscripcion', async () => {
+    repoMock.findById.mockResolvedValue({ ...dtoBase, idSuscripcion: 7});
+    await expect(
+      service.update(7, { idSuscripcion: 999 } as any),
+    ).rejects.toThrow(IdInvalidoError);
   });
 });

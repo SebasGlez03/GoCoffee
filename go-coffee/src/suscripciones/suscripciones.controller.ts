@@ -5,9 +5,11 @@ import {
   HttpCode,
   Param,
   ParseIntPipe,
+  Patch,
   Post,
-  Put,
   Res,
+  UsePipes,
+  ValidationPipe,
 } from '@nestjs/common';
 import type { Response } from 'express';
 import type { CrearSuscripcionDto } from './dto/crear-suscripcion.dto';
@@ -15,8 +17,17 @@ import type { ModificarSuscripcionDto } from './dto/modificar-suscripcion.dto';
 import { aSuscripcion } from './dto/suscripcion-respuesta.dto';
 import { SuscripcionesService } from './suscripciones.service';
 import { SuscripcionNoEncontradaError } from '../dominio/errores';
+import { ModificacionSuscripcion } from '../dominio/entidades-repo';
 
 @Controller('suscripciones')
+// WARN: UsePipes se utiliza aqui y no en el main, porque romperia los DTOs de planes (que son interfaces). Si llegamos a cambiar los DTOs de planes a clases, podriamos moverlo a main.ts.
+@UsePipes(
+  new ValidationPipe({
+    whitelist: true,
+    forbidNonWhitelisted: true,
+    transform: true,
+  }),
+)
 export class SuscripcionesController {
   constructor(private readonly servicio: SuscripcionesService) {}
 
@@ -47,13 +58,17 @@ export class SuscripcionesController {
     return aSuscripcion(suscripcion);
   }
 
-  @Put(':id')
+  @Patch(':id')
   async update(
     @Param('id', ParseIntPipe) id: number,
     @Body() dto: ModificarSuscripcionDto,
   ) {
-    const dtoConId = { ...dto, id };
-    const suscripcion = await this.servicio.update(dtoConId);
+    const { fechaInicio, ...resto } = dto;
+    const modificacion: ModificacionSuscripcion = {
+      ...resto,
+      ...(fechaInicio != undefined && { fechaInicio: new Date(fechaInicio) }),
+    };
+    const suscripcion = await this.servicio.update(id, modificacion);
     return aSuscripcion(suscripcion);
   }
 }

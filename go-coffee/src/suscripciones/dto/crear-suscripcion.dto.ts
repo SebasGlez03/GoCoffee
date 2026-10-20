@@ -1,11 +1,33 @@
-import { DireccionEntrega, Ciclo } from "../../dominio/entidades";
-import { EstadoSuscripcion } from "../../dominio/tipos";
+import {
+  IsArray,
+  IsDateString,
+  IsIn,
+  IsObject,
+  IsString,
+} from 'class-validator';
+import type { DireccionEntrega, Ciclo } from '../../dominio/entidades';
+import type { EstadoSuscripcion } from '../../dominio/tipos';
 
+const ESTADOS_SUSCRIPCION: EstadoSuscripcion[] = [
+  'ACTIVA',
+  'CANCELADA',
+  'PAUSADA',
+  'SUSPENDIDA',
+];
 
-export interface CrearSuscripcionDto {
+export class CrearSuscripcionDto {
+  @IsString()
   diaSemanaEntrega: string;
-  fechaInicio: Date;
+
+  @IsDateString()
+  fechaInicio: string;
+
+  @IsObject()
   direccionEntrega: DireccionEntrega;
+
+  @IsIn(ESTADOS_SUSCRIPCION)
   estadoSuscripcion: EstadoSuscripcion;
+
+  @IsArray()
   ciclos: Ciclo[];
 }
