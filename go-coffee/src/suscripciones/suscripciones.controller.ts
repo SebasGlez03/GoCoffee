@@ -1,23 +1,33 @@
 import {
-  BadRequestException,
   Body,
   Controller,
   Get,
   HttpCode,
-  NotFoundException,
   Param,
   ParseIntPipe,
+  Patch,
   Post,
-  Put,
   Res,
+  UsePipes,
+  ValidationPipe,
 } from '@nestjs/common';
 import type { Response } from 'express';
 import type { CrearSuscripcionDto } from './dto/crear-suscripcion.dto';
 import type { ModificarSuscripcionDto } from './dto/modificar-suscripcion.dto';
 import { aSuscripcion } from './dto/suscripcion-respuesta.dto';
 import { SuscripcionesService } from './suscripciones.service';
+import { SuscripcionNoEncontradaError } from '../dominio/errores';
+import { ModificacionSuscripcion } from '../dominio/entidades-repo';
 
 @Controller('suscripciones')
+// WARN: UsePipes se utiliza aqui y no en el main, porque romperia los DTOs de planes (que son interfaces). Si llegamos a cambiar los DTOs de planes a clases, podriamos moverlo a main.ts.
+@UsePipes(
+  new ValidationPipe({
+    whitelist: true,
+    forbidNonWhitelisted: true,
+    transform: true,
+  }),
+)
 export class SuscripcionesController {
   constructor(private readonly servicio: SuscripcionesService) {}
 
@@ -26,9 +36,7 @@ export class SuscripcionesController {
   async findById(@Param('id', ParseIntPipe) id: number) {
     const suscripcion = await this.servicio.findById(id);
     if (!suscripcion) {
-      throw new NotFoundException(
-        `No se encontro la suscripcion con el id ${id}`,
-      );
+      throw new SuscripcionNoEncontradaError(id);
     }
     return aSuscripcion(suscripcion);
   }
@@ -45,36 +53,22 @@ export class SuscripcionesController {
     @Body() dto: CrearSuscripcionDto,
     @Res({ passthrough: true }) res: Response,
   ) {
-    // TODO: Aqui aplica tambien lo de revisar los errores que no estan aplicados y validados.
-    if (!Number.isInteger(dto.diaSemanaEntrega)) {
-      throw new BadRequestException(
-        'El campo diaSemanaEntrega debe de ser un numero entero',
-      );
-    }
-
-    try {
-      const suscripcion = await this.servicio.save(dto);
-      res.setHeader('Location', `/suscripciones/${suscripcion.idSuscripcion}`);
-      return aSuscripcion(suscripcion);
-    } catch (error) {
-      if (error instanceof Error) {
-        throw new Error(error.message);
-        // TODO: Aqui tambien poner los errores aplicando y validando.
-      }
-    }
+    const suscripcion = await this.servicio.save(dto);
+    res.setHeader('Location', `/suscripciones/${suscripcion.idSuscripcion}`);
+    return aSuscripcion(suscripcion);
   }
 
-  @Put(':id')
+  @Patch(':id')
   async update(
     @Param('id', ParseIntPipe) id: number,
     @Body() dto: ModificarSuscripcionDto,
   ) {
-    if (id <= 0) {
-      throw new BadRequestException('El ID debe ser un número entero positivo');
-    }
-
-    const dtoConId = { ...dto, id };
-    const suscripcion = await this.servicio.update(dtoConId);
+    const { fechaInicio, ...resto } = dto;
+    const modificacion: ModificacionSuscripcion = {
+      ...resto,
+      ...(fechaInicio != undefined && { fechaInicio: new Date(fechaInicio) }),
+    };
+    const suscripcion = await this.servicio.update(id, modificacion);
     return aSuscripcion(suscripcion);
   }
 }
