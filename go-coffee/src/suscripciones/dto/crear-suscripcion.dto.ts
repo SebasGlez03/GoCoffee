@@ -1,27 +1,62 @@
 import {
-  IsArray,
+  IsString,
+  IsNotEmpty,
+  IsEnum,
   IsDateString,
-  IsIn,
-  IsObject
+  IsInt,
+  Min,
+  ValidateNested,
+  IsArray,
+  IsNumber,
+  IsOptional,
 } from 'class-validator';
-import type { DireccionEntrega, Ciclo } from '../../dominio/entidades';
-import type { DiaSemana, EstadoSuscripcion} from '../../dominio/tipos';
-import { DIAS_SEMANA, ESTADOS_SUSCRIPCION} from '../../dominio/tipos';
+import { Type } from 'class-transformer';
+import {
+  DIAS_SEMANA,
+  ESTADOS_SUSCRIPCION,
+} from '../../dominio/tipos';
+import type { DiaSemana, EstadoSuscripcion } from '../../dominio/tipos';
 
+class DireccionEntregaDto {
+  @IsInt()
+  @Min(1)
+  idDireccionEntrega?: number;
+
+  @IsString()
+  @IsNotEmpty()
+  calle!: string;
+
+  @IsString()
+  @IsNotEmpty()
+  codigoPostal!: string;
+
+  @IsString()
+  @IsNotEmpty()
+  numeroCasa!: string;
+
+  @IsString()
+  @IsNotEmpty()
+  estado!: string;
+}
 
 export class CrearSuscripcionDto {
-  @IsIn(DIAS_SEMANA)
+  @IsInt()
+  @Min(1)
+  planId!: number;
+
+  @IsEnum(DIAS_SEMANA)
   diaSemanaEntrega!: DiaSemana;
 
   @IsDateString()
   fechaInicio!: string;
 
-  @IsObject()
-  direccionEntrega!: DireccionEntrega;
+  @ValidateNested()
+  @Type(() => DireccionEntregaDto)
+  direccionEntrega!: DireccionEntregaDto;
 
-  @IsIn(ESTADOS_SUSCRIPCION)
+  @IsEnum(ESTADOS_SUSCRIPCION)
   estadoSuscripcion!: EstadoSuscripcion;
 
   @IsArray()
-  ciclos!: Ciclo[];
+  ciclos!: any[];
 }

@@ -13,12 +13,7 @@ export class SuscripcionPrismaRepository implements SuscripcionRepository {
       where: { idSuscripcion: id },
       include: {
         direccionEntrega: true,
-        ciclo: {
-          include: {
-            cobro: true,
-            entrega: true,
-          },
-        },
+        plan: true,
       },
     });
 
@@ -31,12 +26,7 @@ export class SuscripcionPrismaRepository implements SuscripcionRepository {
     const items = await this.prisma.client.suscripcion.findMany({
       include: {
         direccionEntrega: true,
-        ciclo: {
-          include: {
-            cobro: true,
-            entrega: true,
-          },
-        },
+        plan: true,
       },
     });
 
@@ -46,6 +36,9 @@ export class SuscripcionPrismaRepository implements SuscripcionRepository {
   async save(entidad: Suscripcion): Promise<Suscripcion> {
     const created = await this.prisma.client.suscripcion.create({
       data: {
+        plan: {
+          connect: { idPlan: entidad.planId },
+        },
         diaSemana: entidad.diaSemanaEntrega,
         fechaInicio: entidad.fechaInicio,
         estadoSuscripcion: entidad.estadoSuscripcion,
@@ -62,12 +55,7 @@ export class SuscripcionPrismaRepository implements SuscripcionRepository {
       },
       include: {
         direccionEntrega: true,
-        ciclo: {
-          include: {
-            cobro: true,
-            entrega: true,
-          },
-        },
+        plan: true,
       },
     });
 
@@ -78,6 +66,9 @@ export class SuscripcionPrismaRepository implements SuscripcionRepository {
     const updated = await this.prisma.client.suscripcion.update({
       where: { idSuscripcion: entidad.idSuscripcion },
       data: {
+        plan: {
+          connect: { idPlan: entidad.planId },
+        },
         diaSemana: entidad.diaSemanaEntrega,
         fechaInicio: entidad.fechaInicio,
         estadoSuscripcion: entidad.estadoSuscripcion,
@@ -103,12 +94,7 @@ export class SuscripcionPrismaRepository implements SuscripcionRepository {
       },
       include: {
         direccionEntrega: true,
-        ciclo: {
-          include: {
-            cobro: true,
-            entrega: true,
-          },
-        },
+        plan: true,
       },
     });
 
@@ -122,32 +108,11 @@ export class SuscripcionPrismaRepository implements SuscripcionRepository {
   }
 
   private toDomain(item: any): Suscripcion {
-    const ciclos: Ciclo[] = item.ciclo
-      ? [
-          {
-            idCiclo: item.ciclo.idCiclo,
-            fechaProgramada: item.ciclo.fechaProgramada,
-            numCiclo: item.ciclo.numCiclo,
-            entrega: {
-              idEntrega: item.ciclo.entrega?.idEntrega ?? 0,
-              fechaProgramada:
-                item.ciclo.entrega?.fechaEntrega ?? item.ciclo.fechaProgramada,
-              estadoEntrega:
-                (item.ciclo.entrega?.estadoEntrega as any) ?? 'PROGRAMADA',
-            },
-            cobro: {
-              idCobro: item.ciclo.cobro?.idCobro ?? 0,
-              fechaCobro:
-                item.ciclo.cobro?.fechaCobro ?? item.ciclo.fechaProgramada,
-              estado:
-                (item.ciclo.cobro?.estadoCobro as any) ?? 'PAGADO',
-            },
-          },
-        ]
-      : [];
+    const ciclos: Ciclo[] = [];
 
     return {
       idSuscripcion: item.idSuscripcion,
+      planId: item.planId,
       diaSemanaEntrega: item.diaSemana,
       fechaInicio: item.fechaInicio,
       direccionEntrega: item.direccionEntrega

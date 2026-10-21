@@ -21,7 +21,7 @@ export class SuscripcionesService {
   constructor(
     @Inject(SUSCRIPCIONES_REPOSITORY)
     private readonly repo: SuscripcionRepository,
-  ) {}
+  ) { }
 
   findById(id: number): Promise<Suscripcion | null> {
     return this.repo.findById(id);
@@ -39,16 +39,28 @@ export class SuscripcionesService {
       throw new CambioRetroactivoError(fechaInicio);
     }
 
+    const direccionEntrega = {
+      idDireccionEntrega: dto.direccionEntrega.idDireccionEntrega ?? 0,
+      calle: dto.direccionEntrega.calle,
+      codigoPostal: dto.direccionEntrega.codigoPostal,
+      numeroCasa: dto.direccionEntrega.numeroCasa,
+      estado: dto.direccionEntrega.estado,
+    };
+
     return this.repo.save({
-      fechaInicio: new Date(dto.fechaInicio),
+      planId: dto.planId,
+      fechaInicio,
       estadoSuscripcion: dto.estadoSuscripcion,
-      direccionEntrega: dto.direccionEntrega,
+      direccionEntrega,
       diaSemanaEntrega: dto.diaSemanaEntrega,
       ciclos: dto.ciclos,
     });
   }
 
   private validarCamposObligatorios(dto: CrearSuscripcionDto): void {
+    if (!dto.planId || dto.planId <= 0) {
+      throw new IdInvalidoError();
+    }
     if (!dto.diaSemanaEntrega) {
       throw new DiaSemanaEntregadoVacio();
     }
@@ -67,6 +79,8 @@ export class SuscripcionesService {
   }
 
   async update(id: number, modificacion: ModificacionSuscripcion): Promise<Suscripcion> {
+   
+   
     if (!Number.isInteger(id) || id <= 0) {
       throw new IdInvalidoError();
     }
@@ -81,6 +95,7 @@ export class SuscripcionesService {
     if (suscripcionExistente.estadoSuscripcion == 'CANCELADA') {
       throw new SuscripcionCanceladaError(id);
     }
+
     if (modificacion.diaSemanaEntrega != undefined && !modificacion.diaSemanaEntrega) {
       throw new DiaSemanaEntregadoVacio();
     }

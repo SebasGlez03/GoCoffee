@@ -1,8 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Get a free hosted Postgres database in seconds: `npx create-db`
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -22,8 +17,24 @@ model Usuario {
   @@map("usuarios")
 }
 
+model Plan {
+  idPlan            Int           @id @default(autoincrement()) @map("id")
+  nombre            String
+  cantidadBolsas    Int
+  precio            Float
+  frecuenciaEntrega String
+  fechaCreacion     DateTime      @default(now())
+  estado            String        @default("ACTUAL")
+  remplazadoPorId   Int?
+  suscripciones     Suscripcion[]
+
+  @@map("planes")
+}
+
 model Suscripcion {
   idSuscripcion                      Int               @id @default(autoincrement()) @map("id")
+  planId                             Int
+  plan                               Plan              @relation(fields: [planId], references: [idPlan])
   diaSemana                          String
   fechaInicio                        DateTime          @default(now())
   estadoSuscripcion                  String
@@ -76,18 +87,4 @@ model Entrega {
   ciclo         Ciclo[]
 
   @@map("Entrega")
-}
-
-
-model Plan {
-  idPlan            Int      @id @default(autoincrement()) @map("id")
-  nombre            String
-  cantidadBolsas    Int
-  precio            Float
-  frecuenciaEntrega String
-  fechaCreacion     DateTime @default(now())
-  estado            String   @default("ACTUAL")
-  remplazadoPorId   Int?
-
-  @@map("planes")
 }
