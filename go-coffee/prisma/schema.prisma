@@ -11,7 +11,6 @@ datasource db {
   provider = "postgresql"
 }
 
-
 model Usuario {
   idUsuario                Int          @id @default(autoincrement()) @map("id")
   email                    String       @unique @db.VarChar(160)
@@ -67,7 +66,7 @@ model Cobro {
   estadoCobro String
   ciclo       Ciclo[]
 
-  @@map("cobros")
+  @@map("Cobro")
 }
 
 model Entrega {
@@ -76,8 +75,9 @@ model Entrega {
   estadoEntrega String
   ciclo         Ciclo[]
 
-  @@map("entregas")
+  @@map("Entrega")
 }
+
 
 model Plan {
   idPlan            Int      @id @default(autoincrement()) @map("id")
