@@ -12,7 +12,7 @@ import {
 export interface Usuario {
   idUsuario: number;
   email: string;
-  contrasenia: string;
+  passwordHash: string;
   suscripciones: Suscripcion[];
   rol: Rol;
 }
