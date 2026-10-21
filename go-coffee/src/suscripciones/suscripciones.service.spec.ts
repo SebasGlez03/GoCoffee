@@ -22,7 +22,7 @@ describe('SuscripcionesService', () => {
   };
 
   const dtoBase = {
-    diaSemanaEntrega: 'Lunes',
+    diaSemanaEntrega: 'LUNES',
     fechaInicio: new Date('2026-12-01'),
     direccionEntrega: {
       idDireccionEntrega: 1,

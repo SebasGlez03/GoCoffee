@@ -13,7 +13,7 @@ async function ejecutarEscenarios() {
   // Suscripcion de prueba Activa
   const suscripcionActiva: Suscripcion = {
     idSuscripcion: 101,
-    diaSemanaEntrega: 'Lunes',
+    diaSemanaEntrega: 'LUNES',
     fechaInicio: new Date('2026-09-28'),
     direccionEntrega: {
       idDireccionEntrega: 1,

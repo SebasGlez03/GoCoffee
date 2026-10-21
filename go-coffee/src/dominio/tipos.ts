@@ -13,3 +13,5 @@ export type EstadoSolicitud = 'ACEPTADA' | 'RECHAZADA' | 'PENDIENTE';
 export type Rol = 'ADMINISTRADOR' | 'CLIENTE';
 
 export type FrecuenciaEntrega = 'SEMANAL' | 'QUINCENAL' | 'MENSUAL';
+
+export type DiaSemana = 'LUNES' | 'MARTES' | 'MIERCOLES' | 'JUEVES' | 'VIERNES' | 'SABADO' | 'DOMINGO'

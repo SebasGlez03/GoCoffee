@@ -1,10 +1,10 @@
 import { DireccionEntrega, Ciclo, Suscripcion } from "../../dominio/entidades";
-import { EstadoSuscripcion } from "../../dominio/tipos";
+import { DiaSemana, EstadoSuscripcion } from "../../dominio/tipos";
 
 
 export interface SuscripcionResponseDto {
   id: number;
-  diaSemanaEntrega: string;
+  diaSemanaEntrega: DiaSemana;
   fechaInicio: string;
   direccionEntrega: DireccionEntrega;
   estadoSuscripcion: EstadoSuscripcion;

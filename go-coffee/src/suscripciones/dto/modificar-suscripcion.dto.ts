@@ -4,10 +4,9 @@ import {
   IsIn,
   IsObject,
   IsOptional,
-  IsString,
 } from 'class-validator';
 import type { DireccionEntrega, Ciclo } from '../../dominio/entidades';
-import type { EstadoSuscripcion } from '../../dominio/tipos';
+import type { DiaSemana, EstadoSuscripcion } from '../../dominio/tipos';
 
 const ESTADOS_SUSCRIPCION: EstadoSuscripcion[] = [
   'ACTIVA',
@@ -16,10 +15,20 @@ const ESTADOS_SUSCRIPCION: EstadoSuscripcion[] = [
   'SUSPENDIDA',
 ];
 
+const DIAS_SEMANA: DiaSemana[] = [
+  'LUNES',
+  'MARTES',
+  'MIERCOLES',
+  'JUEVES',
+  'VIERNES',
+  'SABADO',
+  'DOMINGO'
+]
+
 export class ModificarSuscripcionDto {
   @IsOptional()
-  @IsString()
-  diaSemanaEntrega?: string;
+  @IsIn(DIAS_SEMANA)
+  diaSemanaEntrega?: DiaSemana;
 
   @IsOptional()
   @IsDateString()

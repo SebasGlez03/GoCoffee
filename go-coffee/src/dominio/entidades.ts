@@ -1,4 +1,5 @@
 import {
+  DiaSemana,
   EstadoCobro,
   EstadoEntrega,
   EstadoPlan,
@@ -18,7 +19,7 @@ export interface Usuario {
 
 export interface Suscripcion {
   idSuscripcion: number;
-  diaSemanaEntrega: string;
+  diaSemanaEntrega: DiaSemana;
   fechaInicio: Date;
   direccionEntrega: DireccionEntrega;
   estadoSuscripcion: EstadoSuscripcion;

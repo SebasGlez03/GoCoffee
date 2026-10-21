@@ -9,7 +9,7 @@ POST {{baseUrl}}/suscripciones
 Content-Type: {{contentType}}
 
 {
-  "diaSemanaEntrega": 1,
+  "diaSemanaEntrega": "LUNES",
   "fechaInicio": "2026-09-27",
   "direccionEntrega": {
     "calle": "Av. Principal",
@@ -29,9 +29,12 @@ PATCH {{baseUrl}}/suscripciones/1
 Content-Type: {{contentType}}
 
 {
-  "diaSemanaEntrega": "Martes",
+  "diaSemanaEntrega": "MARTES",
   "estadoSuscripcion": "PAUSADA"
 }
 
 ### Ejemplos de estados válidos para estadoSuscripcion:
 # ACTIVA | PAUSADA | SUSPENDIDA | CANCELADA
+
+### Ejemplos de valores válidos para diaSemanaEntrega:
+# LUNES | MARTES | MIERCOLES | JUEVES | VIERNES | SABADO | DOMINGO
