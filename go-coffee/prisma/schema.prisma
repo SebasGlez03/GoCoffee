@@ -18,37 +18,34 @@ model Usuario {
 }
 
 model Plan {
-  idPlan                  Int                           @id @default(autoincrement()) @map("id")
-  nombre                  String
-  cantidadBolsas          Int
-  precio                  Float
-  frecuenciaEntrega       String
-  fechaCreacion           DateTime                      @default(now())
-  estado                  String                        @default("ACTUAL")
-  remplazadoPorId         Int?
-  suscripciones           Suscripcion[]
-  solicitudesComoAnterior SolicitudCambioPlanSuscrito[] @relation("PlanAnterior")
-  solicitudesComoNuevo    SolicitudCambioPlanSuscrito[] @relation("PlanNuevo")
+  idPlan            Int           @id @default(autoincrement()) @map("id")
+  nombre            String
+  cantidadBolsas    Int
+  precio            Float
+  frecuenciaEntrega String
+  fechaCreacion     DateTime      @default(now())
+  estado            String        @default("ACTUAL")
+  remplazadoPorId   Int?
+  suscripciones     Suscripcion[]
 
   @@map("planes")
 }
 
 model Suscripcion {
-  idSuscripcion      Int                           @id @default(autoincrement()) @map("id")
-  plan               Plan                          @relation(fields: [idPlan], references: [idPlan])
-  idPlan             Int                           @map("idPlan")
-  diaSemana          String
-  fechaInicio        DateTime                      @default(now())
-  estadoSuscripcion  String
-  usuarios           Usuario[]
-  direccionEntrega   DireccionEntrega?             @relation(fields: [IdDireccionEntrega], references: [idDireccionEntrega])
-  IdDireccionEntrega Int?                          @map("IdDireccionEntrega")
-  ciclo              Ciclo?                        @relation(fields: [IdCiclo], references: [idCiclo])
-  IdCiclo            Int?                          @map("IdCiclo")
-  solicitudesCambio  SolicitudCambioPlanSuscrito[]
+  idSuscripcion                      Int               @id @default(autoincrement()) @map("id")
+  planId                             Int
+  plan                               Plan              @relation(fields: [planId], references: [idPlan])
+  diaSemana                          String
+  fechaInicio                        DateTime          @default(now())
+  estadoSuscripcion                  String
+  direccionEntrega                   DireccionEntrega? @relation(fields: [direccionEntregaIdDireccionEntrega], references: [idDireccionEntrega])
+  direccionEntregaIdDireccionEntrega Int?
+  ciclo                              Ciclo?            @relation(fields: [cicloIdCiclo], references: [idCiclo])
+  cicloIdCiclo                       Int?
 
   @@map("suscripciones")
 }
+
 
 model DireccionEntrega {
   idDireccionEntrega Int           @id @default(autoincrement()) @map("id")

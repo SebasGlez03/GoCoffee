@@ -1,6 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { PLAN_REPOSITORY } from './infra/planes.tokens';
-import { PlanMemoriaRepository } from './infra/planes-memoria.repository';
+//import { PlanMemoriaRepository } from './infra/planes-memoria.repository';
+import { PlanPrismaRepository } from './infra/planes-prisma.repository';
 import { Plan } from '../dominio/entidades';
 import {
   CantidadBolsasInvalidaError,
@@ -20,7 +21,7 @@ import { EstadoPlan } from '../dominio/tipos';
 @Injectable()
 export class PlanesService {
   constructor(
-    @Inject(PLAN_REPOSITORY) private readonly repo: PlanMemoriaRepository,
+    @Inject(PLAN_REPOSITORY) private readonly repo: PlanPrismaRepository,
   ) {}
 
   async buscarPlanPorId(id: number): Promise<Plan> {

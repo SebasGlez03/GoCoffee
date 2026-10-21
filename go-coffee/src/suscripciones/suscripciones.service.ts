@@ -48,7 +48,7 @@ export class SuscripcionesService {
     };
 
     return this.repo.save({
-      idPlan: dto.planId,
+      planId: dto.planId,
       fechaInicio,
       estadoSuscripcion: dto.estadoSuscripcion,
       direccionEntrega,

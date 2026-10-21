@@ -19,7 +19,7 @@ export interface Usuario {
 
 export interface Suscripcion {
   idSuscripcion: number;
-  idPlan: number;
+  planId: number;
   diaSemanaEntrega: DiaSemana;
   fechaInicio: Date;
   direccionEntrega: DireccionEntrega;

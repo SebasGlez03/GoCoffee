@@ -55,7 +55,16 @@ export const CICLOS: Ciclo[] = [
 ]
 
 export const SUSCRIPCIONES: Suscripcion[] = [
-    {idSuscripcion: 1, diaSemanaEntrega: "LUNES", fechaInicio: new Date(), direccionEntrega: DIRECCIONES_ENTREGAS[0], estadoSuscripcion: "ACTIVA", ciclos: CICLOS},
-    {idSuscripcion: 2, diaSemanaEntrega: "MARTES", fechaInicio: new Date(), direccionEntrega: DIRECCIONES_ENTREGAS[2], estadoSuscripcion: "ACTIVA", ciclos: CICLOS},
-    {idSuscripcion: 3, diaSemanaEntrega: "SABADO", fechaInicio: new Date(), direccionEntrega: DIRECCIONES_ENTREGAS[3], estadoSuscripcion: "ACTIVA", ciclos: CICLOS},
+    {
+      idSuscripcion: 1, diaSemanaEntrega: "LUNES", fechaInicio: new Date(), direccionEntrega: DIRECCIONES_ENTREGAS[0], estadoSuscripcion: "ACTIVA", ciclos: CICLOS,
+      planId: 1
+    },
+    {
+      idSuscripcion: 2, diaSemanaEntrega: "MARTES", fechaInicio: new Date(), direccionEntrega: DIRECCIONES_ENTREGAS[2], estadoSuscripcion: "ACTIVA", ciclos: CICLOS,
+      planId: 1
+    },
+    {
+      idSuscripcion: 3, diaSemanaEntrega: "SABADO", fechaInicio: new Date(), direccionEntrega: DIRECCIONES_ENTREGAS[3], estadoSuscripcion: "ACTIVA", ciclos: CICLOS,
+      planId: 1
+    },
 ] 

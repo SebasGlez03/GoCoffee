@@ -1,6 +1,24 @@
 @baseUrl = http://localhost:3000
 @contentType = application/json
 
+
+### 1) Obtener todos los planes
+GET {{baseUrl}}/planes
+
+
+### 2) Crear un plan
+POST {{baseUrl}}/planes
+Content-Type: {{contentType}}
+
+{
+  "nombre": "Aficionado",
+  "cantidadBolsas": 1,
+  "precio": 250,
+  "frecuenciaEntrega": "SEMANAL"
+}
+
+
+
 ### Obtener todas las suscripciones
 GET {{baseUrl}}/suscripciones
 
