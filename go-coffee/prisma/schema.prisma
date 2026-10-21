@@ -4,15 +4,14 @@
 // Get a free hosted Postgres database in seconds: `npx create-db`
 
 generator client {
-  provider = "prisma-client"
-  output   = "../generated/prisma"
+  provider = "prisma-client-js"
 }
 
 datasource db {
   provider = "postgresql"
 }
 
-//TODO: Aqui tengo la duda de si dejar el rol como String (como lo hizo el profe) o crear un enum.
+
 model Usuario {
   idUsuario                Int          @id @default(autoincrement()) @map("id")
   email                    String       @unique @db.VarChar(160)
@@ -24,7 +23,6 @@ model Usuario {
   @@map("usuarios")
 }
 
-// Aqui tambien se aplica el mismo dilema que tengo con el modelo anterior, ya que diaSemana y estadoSuscripcion deberian ser enumeradores a mi parecer.
 model Suscripcion {
   idSuscripcion                      Int               @id @default(autoincrement()) @map("id")
   diaSemana                          String
@@ -41,11 +39,11 @@ model Suscripcion {
 
 model DireccionEntrega {
   idDireccionEntrega Int           @id @default(autoincrement()) @map("id")
-  calle              String
-  codigoPostal       String
-  numeroCasa         String
-  estado             String
-  suscripcion        Suscripcion[]
+  calle             String
+  codigoPostal      String
+  numeroCasa        String
+  estado            String
+  suscripcion       Suscripcion[]
 
   @@map("direccionesEntrega")
 }
@@ -81,16 +79,15 @@ model Entrega {
   @@map("entregas")
 }
 
-
-//Modelo para Plan
 model Plan {
-  idPlan             Int      @id @default(autoincrement()) @map("id")
-  nombre             String
-  cantidadBolsas     Int
-  precio             Float
-  frecuenciaEntrega  String
-  fechaCreacion      DateTime @default(now())
-  estado             String   @default("ACTUAL")
-  remplazadoPorId    Int?
+  idPlan            Int      @id @default(autoincrement()) @map("id")
+  nombre            String
+  cantidadBolsas    Int
+  precio            Float
+  frecuenciaEntrega String
+  fechaCreacion     DateTime @default(now())
+  estado            String   @default("ACTUAL")
+  remplazadoPorId   Int?
+
   @@map("planes")
 }

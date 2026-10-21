@@ -10,7 +10,7 @@ Content-Type: {{contentType}}
 
 {
   "diaSemanaEntrega": "LUNES",
-  "fechaInicio": "2026-09-27",
+  "fechaInicio": "2026-11-05",
   "direccionEntrega": {
     "calle": "Av. Principal",
     "codigoPostal": "12345",
