@@ -1,12 +1,12 @@
-import { Suscripcion, Entrega } from './entidades';
-import { EstadoEntrega } from './tipos';
-import { EntregaRepository } from './entregas-repo';
+import { Suscripcion, Entrega } from '../dominio/entidades';
+import { EstadoEntrega } from '../dominio/tipos';
+import { EntregaRepository } from '../entregas/infra/entregas-repo';
 import { 
   SuscripcionInactivaError,
   EntregaDuplicadaError,
   ModificacionEntregaEnProcesoError,
   SuscripcionCanceladaError,
-} from './errores';
+} from '../dominio/errores';
 
 export class EntregasDominioService {
   constructor(private readonly entregaRepo: EntregaRepository) {}
