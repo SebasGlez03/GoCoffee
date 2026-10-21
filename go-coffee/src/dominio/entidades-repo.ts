@@ -1,4 +1,4 @@
-import { Suscripcion } from './entidades';
+import { Suscripcion, Entrega } from './entidades';
 
 export interface Repository<T, ID = number> {
   findById(id: ID): Promise<T | null>;
@@ -9,5 +9,6 @@ export interface Repository<T, ID = number> {
 }
 
 export type NuevaSuscripcion = Omit<Suscripcion, 'idSuscripcion'>
+export type NuevaEntrega = Omit<Entrega,'idEntrega'>
 export type ModificacionSuscripcion = Partial<Suscripcion>
 

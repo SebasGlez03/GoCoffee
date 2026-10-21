@@ -5,38 +5,23 @@ import {
   IsObject
 } from 'class-validator';
 import type { DireccionEntrega, Ciclo } from '../../dominio/entidades';
-import type { DiaSemana, EstadoSuscripcion } from '../../dominio/tipos';
+import type { DiaSemana, EstadoSuscripcion} from '../../dominio/tipos';
+import { DIAS_SEMANA, ESTADOS_SUSCRIPCION} from '../../dominio/tipos';
 
-const ESTADOS_SUSCRIPCION: EstadoSuscripcion[] = [
-  'ACTIVA',
-  'CANCELADA',
-  'PAUSADA',
-  'SUSPENDIDA',
-];
-
-const DIAS_SEMANA: DiaSemana[] = [
-  'LUNES',
-  'MARTES',
-  'MIERCOLES',
-  'JUEVES',
-  'VIERNES',
-  'SABADO',
-  'DOMINGO'
-]
 
 export class CrearSuscripcionDto {
   @IsIn(DIAS_SEMANA)
-  diaSemanaEntrega: DiaSemana;
+  diaSemanaEntrega!: DiaSemana;
 
   @IsDateString()
-  fechaInicio: string;
+  fechaInicio!: string;
 
   @IsObject()
-  direccionEntrega: DireccionEntrega;
+  direccionEntrega!: DireccionEntrega;
 
   @IsIn(ESTADOS_SUSCRIPCION)
-  estadoSuscripcion: EstadoSuscripcion;
+  estadoSuscripcion!: EstadoSuscripcion;
 
   @IsArray()
-  ciclos: Ciclo[];
+  ciclos!: Ciclo[];
 }

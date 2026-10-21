@@ -1,10 +1,48 @@
-import { EstadoPlan, FrecuenciaEntrega } from "../../dominio/tipos";
+import { 
+  IsInt, 
+  IsString, 
+  IsNumber, 
+  IsPositive, 
+  IsIn, 
+  IsOptional, 
+  Min, 
+  IsNotEmpty 
+} from 'class-validator';
+import { 
+  ESTADOS_PLAN, 
+  FRECUENCIAS_ENTREGA 
+} from '../../dominio/tipos';
 
-export interface ModificarPlanDTO {
-    id: number;
-    nombre?: string;
-    cantidadBolsas?: number;
-    precio?: number;
-    frecuenciaEntrega?: FrecuenciaEntrega;
-    estadoPlan?: EstadoPlan;
+import type{ 
+  EstadoPlan, 
+  FrecuenciaEntrega 
+} from '../../dominio/tipos';
+
+export class ModificarPlanDTO {
+  @IsInt()
+  @Min(1)
+  id!: number;
+
+  @IsOptional()
+  @IsString()
+  @IsNotEmpty()
+  nombre?: string;
+
+  @IsOptional()
+  @IsInt()
+  @Min(1)
+  cantidadBolsas?: number;
+
+  @IsOptional()
+  @IsNumber()
+  @IsPositive()
+  precio?: number;
+
+  @IsOptional()
+  @IsIn(FRECUENCIAS_ENTREGA)
+  frecuenciaEntrega?: FrecuenciaEntrega;
+
+  @IsOptional()
+  @IsIn(ESTADOS_PLAN)
+  estadoPlan?: EstadoPlan;
 }

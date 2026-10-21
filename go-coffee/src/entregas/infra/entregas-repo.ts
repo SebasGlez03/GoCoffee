@@ -1,4 +1,4 @@
-import { Entrega } from './entidades';
+import { Entrega } from '../../dominio/entidades';
 
 export interface EntregaRepository {
   save(entrega: Entrega): Promise<Entrega>;

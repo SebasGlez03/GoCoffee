@@ -7,9 +7,7 @@ import {
   ParseIntPipe,
   Patch,
   Post,
-  Res,
-  UsePipes,
-  ValidationPipe,
+  Res
 } from '@nestjs/common';
 import type { Response } from 'express';
 import type { CrearSuscripcionDto } from './dto/crear-suscripcion.dto';
@@ -20,14 +18,7 @@ import { SuscripcionNoEncontradaError } from '../dominio/errores';
 import { ModificacionSuscripcion } from '../dominio/entidades-repo';
 
 @Controller('suscripciones')
-// WARN: UsePipes se utiliza aqui y no en el main, porque romperia los DTOs de planes (que son interfaces). Si llegamos a cambiar los DTOs de planes a clases, podriamos moverlo a main.ts.
-@UsePipes(
-  new ValidationPipe({
-    whitelist: true,
-    forbidNonWhitelisted: true,
-    transform: true,
-  }),
-)
+
 export class SuscripcionesController {
   constructor(private readonly servicio: SuscripcionesService) {}
 

@@ -1,5 +1,5 @@
-import { EntregaMemoriaRepository } from './dominio/entregas-repo';
-import { EntregasDominioService } from './dominio/entregas.service';
+import { EntregaMemoriaRepository } from './entregas/infra/entregas-repo';
+import { EntregasDominioService } from './entregas/entregas.service';
 import { Suscripcion, Entrega } from './dominio/entidades';
 
 async function ejecutarEscenarios() {
