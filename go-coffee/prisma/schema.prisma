@@ -1,0 +1,75 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+//TODO: Aqui tengo la duda de si dejar el rol como String (como lo hizo el profe) o crear un enum.
+model Usuario {
+  idUsuario                Int          @id @default(autoincrement()) @map("id")
+  email                    String       @unique @db.VarChar(160)
+  passwordHash             String       @db.VarChar(72)
+  rol                      String       @default("CLIENTE") @db.VarChar(20)
+  suscripcion              Suscripcion? @relation(fields: [suscripcionIdSuscripcion], references: [idSuscripcion])
+  suscripcionIdSuscripcion Int?
+
+  @@map("usuarios")
+}
+
+// Aqui tambien se aplica el mismo dilema que tengo con el modelo anterior, ya que diaSemana y estadoSuscripcion deberian ser enumeradores a mi parecer.
+model Suscripcion {
+  idSuscripcion                      Int               @id @default(autoincrement()) @map("id")
+  diaSemana                          String
+  fechaInicio                        DateTime          @default(now())
+  estadoSuscripcion                  String
+  usuarios                           Usuario[]
+  direccionEntrega                   DireccionEntrega? @relation(fields: [direccionEntregaIdDireccionEntrega], references: [idDireccionEntrega])
+  direccionEntregaIdDireccionEntrega Int?
+
+  @@map("suscripciones")
+}
+
+model DireccionEntrega {
+  idDireccionEntrega Int           @id @default(autoincrement()) @map("id")
+  calle              String
+  codigoPostal       String
+  numeroCasa         String
+  estado             String
+  suscripcion        Suscripcion[]
+
+  @@map("direccionesEntrega")
+}
+
+model Ciclo {
+  idCiclo          Int      @id @default(autoincrement()) @map("id")
+  fechaProgramada  DateTime
+  numCiclo         Int
+  cobro            Cobro?   @relation(fields: [cobrosIdCobro], references: [idCobro])
+  cobrosIdCobro    Int?
+  entrega          Entrega? @relation(fields: [entregaIdEntrega], references: [idEntrega])
+  entregaIdEntrega Int?
+
+  @@map("ciclos")
+}
+
+model Cobro {
+  idCobro     Int      @id @default(autoincrement()) @map("id")
+  fechaCobro  DateTime
+  estadoCobro String
+  ciclo       Ciclo[]
+}
+
+model Entrega {
+  idEntrega     Int      @id @default(autoincrement()) @map("id")
+  fechaEntrega  DateTime
+  estadoEntrega String
+  ciclo         Ciclo[]
+}
