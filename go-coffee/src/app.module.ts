@@ -4,11 +4,12 @@ import { AppService } from './app.service';
 import { SuscripcionesModule } from './suscripciones/suscripciones.module';
 import { PlanesModule } from './planes/planes.module';
 import { EntregasModule } from './entregas/entregas.module';
+import { AuthModule } from './auth/auth.module';
 import { APP_FILTER } from '@nestjs/core';
 import { FiltroErroresDominio } from './common/filtros/filtro-errores-dominio';
 
 @Module({
-  imports: [SuscripcionesModule, PlanesModule, EntregasModule],
+  imports: [SuscripcionesModule, PlanesModule, EntregasModule, AuthModule],
   controllers: [AppController],
   providers: [
     AppService,

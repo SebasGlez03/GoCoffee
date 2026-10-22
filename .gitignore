@@ -1,3 +1,9 @@
 /go-coffee/node_modules/
 /go-coffee/dist/
 /go-coffee/.env/
+
+
+
+ejecuté:
+- npm install @nestjs/jwt @nestjs/passport passport passport-jwt bcryptjs
+- npm install -D @types/passport-jwt
