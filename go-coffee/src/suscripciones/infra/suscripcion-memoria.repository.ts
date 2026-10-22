@@ -26,6 +26,7 @@ export class SuscripcionMemoriaRepository implements SuscripcionRepository {
       direccionEntrega: entidad.direccionEntrega,
       estadoSuscripcion: entidad.estadoSuscripcion,
       fechaInicio: entidad.fechaInicio,
+      planId: 1
     };
     this.suscripciones.push(nueva);
     return nueva;

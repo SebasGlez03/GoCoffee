@@ -37,7 +37,7 @@ export class SuscripcionPrismaRepository implements SuscripcionRepository {
     const created = await this.prisma.client.suscripcion.create({
       data: {
         plan: {
-          connect: { idPlan: entidad.planId },
+          connect: { planId: entidad.planId },
         },
         diaSemana: entidad.diaSemanaEntrega,
         fechaInicio: entidad.fechaInicio,
@@ -67,7 +67,7 @@ export class SuscripcionPrismaRepository implements SuscripcionRepository {
       where: { idSuscripcion: entidad.idSuscripcion },
       data: {
         plan: {
-          connect: { idPlan: entidad.planId },
+          connect: { planId: entidad.planId },
         },
         diaSemana: entidad.diaSemanaEntrega,
         fechaInicio: entidad.fechaInicio,

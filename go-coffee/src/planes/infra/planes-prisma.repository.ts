@@ -10,7 +10,7 @@ export class PlanPrismaRepository implements PlanesRepository {
 
   async findById(id: number): Promise<Plan | null> {
     const item = await this.prisma.client.plan.findUnique({
-      where: { idPlan: id },
+      where: { planId: id },
     });
 
     if (!item) return null;
@@ -41,7 +41,7 @@ export class PlanPrismaRepository implements PlanesRepository {
 
   async update(entidad: Plan): Promise<Plan> {
     const updated = await this.prisma.client.plan.update({
-      where: { idPlan: entidad.idPlan! },
+      where: { planId: entidad.idPlan! },
       data: {
         nombre: entidad.nombre,
         cantidadBolsas: entidad.cantidadBolsas,
@@ -58,7 +58,7 @@ export class PlanPrismaRepository implements PlanesRepository {
 
   async delete(id: number): Promise<void> {
     await this.prisma.client.plan.delete({
-      where: { idPlan: id },
+      where: { planId: id },
     });
   }
 
@@ -72,7 +72,7 @@ export class PlanPrismaRepository implements PlanesRepository {
 
   private toDomain(item: any): Plan {
     return {
-      idPlan: item.idPlan,
+      idPlan: item.planId,
       nombre: item.nombre,
       cantidadBolsas: item.cantidadBolsas,
       precio: item.precio,

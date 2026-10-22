@@ -5,7 +5,6 @@
 ### 1) Obtener todos los planes
 GET {{baseUrl}}/planes
 
-
 ### 2) Crear un plan
 POST {{baseUrl}}/planes
 Content-Type: {{contentType}}
@@ -27,6 +26,7 @@ POST {{baseUrl}}/suscripciones
 Content-Type: {{contentType}}
 
 {
+  "planId": 1,
   "diaSemanaEntrega": "LUNES",
   "fechaInicio": "2026-11-05",
   "direccionEntrega": {
@@ -38,6 +38,7 @@ Content-Type: {{contentType}}
   "estadoSuscripcion": "ACTIVA",
   "ciclos": []
 }
+
 
 ### Obtener suscripción por ID (reemplazar {{id}} con el ID real)
 GET {{baseUrl}}/suscripciones/1
