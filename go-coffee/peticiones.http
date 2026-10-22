@@ -1,6 +1,6 @@
 @baseUrl = http://localhost:3000
 @contentType = application/json
-@token =
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsImVtYWlsIjoiYWRtaW5AZ28tY29mZmVlLmNvbSIsInJvbCI6IkFETUlOSVNUUkFET1IiLCJpYXQiOjE3OTI2MzAxNTMsImV4cCI6MTc5MzIzNDk1M30.x6Vn5CmPXtmCHU2GhQtwLDw4dXGVF3q-CDu1QYuUmmE
 
 ### Registro
 POST {{baseUrl}}/auth/register
@@ -12,7 +12,7 @@ Content-Type: {{contentType}}
   "rol": "ADMINISTRADOR"
 }
 
-  ### Login
+### Login
 POST {{baseUrl}}/auth/login
 Content-Type: {{contentType}}
 
@@ -21,21 +21,17 @@ Content-Type: {{contentType}}
   "password": "123456"
 }
 
-
-
 ### Obtener mi usuario
 GET {{baseUrl}}/auth/me
 Authorization: Bearer {{token}}
 
-
-
-              # PLANES
-### 1) Obtener todos los planes
+### Obtener todos los planes
 GET {{baseUrl}}/planes
 
-### 2) Crear un plan
+### Crear un plan
 POST {{baseUrl}}/planes
 Content-Type: {{contentType}}
+Authorization: Bearer {{token}}
 
 {
   "nombre": "Aficionado",
@@ -44,14 +40,13 @@ Content-Type: {{contentType}}
   "frecuenciaEntrega": "SEMANAL"
 }
 
-
-           # SUSCRIPCIONES
 ### Obtener todas las suscripciones
 GET {{baseUrl}}/suscripciones
 
-### Crear una suscripción CON PLAN ID
+### Crear una suscripción
 POST {{baseUrl}}/suscripciones
 Content-Type: {{contentType}}
+Authorization: Bearer {{token}}
 
 {
   "planId": 1,
@@ -66,7 +61,6 @@ Content-Type: {{contentType}}
   "estadoSuscripcion": "ACTIVA",
   "ciclos": []
 }
-
 
 ### Obtener suscripción por ID (reemplazar {{id}} con el ID real)
 GET {{baseUrl}}/suscripciones/1
