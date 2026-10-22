@@ -1,8 +1,8 @@
 @baseUrl = http://localhost:3000
 @contentType = application/json
-@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsImVtYWlsIjoiYWRtaW5AZ28tY29mZmVlLmNvbSIsInJvbCI6IkFETUlOSVNUUkFET1IiLCJpYXQiOjE3OTI2MzAxNTMsImV4cCI6MTc5MzIzNDk1M30.x6Vn5CmPXtmCHU2GhQtwLDw4dXGVF3q-CDu1QYuUmmE
+@token =
 
-### Registro
+### 1) Registro admin
 POST {{baseUrl}}/auth/register
 Content-Type: {{contentType}}
 
@@ -12,7 +12,7 @@ Content-Type: {{contentType}}
   "rol": "ADMINISTRADOR"
 }
 
-### Login
+### 2) Login admin
 POST {{baseUrl}}/auth/login
 Content-Type: {{contentType}}
 
@@ -21,14 +21,33 @@ Content-Type: {{contentType}}
   "password": "123456"
 }
 
-### Obtener mi usuario
+### 3) Obtener perfil con token
 GET {{baseUrl}}/auth/me
 Authorization: Bearer {{token}}
 
-### Obtener todos los planes
+### 4) Registro cliente
+POST {{baseUrl}}/auth/register
+Content-Type: {{contentType}}
+
+{
+  "email": "cliente@go-coffee.com",
+  "password": "123456",
+  "rol": "CLIENTE"
+}
+
+### 5) Login cliente
+POST {{baseUrl}}/auth/login
+Content-Type: {{contentType}}
+
+{
+  "email": "cliente@go-coffee.com",
+  "password": "123456"
+}
+
+### 6) Obtener todos los planes
 GET {{baseUrl}}/planes
 
-### Crear un plan
+### 7) Crear un plan (solo admin)
 POST {{baseUrl}}/planes
 Content-Type: {{contentType}}
 Authorization: Bearer {{token}}
@@ -40,10 +59,11 @@ Authorization: Bearer {{token}}
   "frecuenciaEntrega": "SEMANAL"
 }
 
-### Obtener todas las suscripciones
+### 8) Obtener todas las suscripciones
 GET {{baseUrl}}/suscripciones
+Authorization: Bearer {{token}}
 
-### Crear una suscripción
+### 9) Crear una suscripción (cliente o admin)
 POST {{baseUrl}}/suscripciones
 Content-Type: {{contentType}}
 Authorization: Bearer {{token}}
@@ -62,18 +82,19 @@ Authorization: Bearer {{token}}
   "ciclos": []
 }
 
-### Obtener suscripción por ID (reemplazar {{id}} con el ID real)
+### 10) Obtener suscripción por ID
 GET {{baseUrl}}/suscripciones/1
+Authorization: Bearer {{token}}
 
-### Modificar suscripción - PATCH, solo envía los campos a cambiar
+### 11) Modificar suscripción
 PATCH {{baseUrl}}/suscripciones/1
 Content-Type: {{contentType}}
+Authorization: Bearer {{token}}
 
 {
   "diaSemanaEntrega": "MARTES",
   "estadoSuscripcion": "PAUSADA"
 }
-
 ### Ejemplos de estados válidos para estadoSuscripcion:
 # ACTIVA | PAUSADA | SUSPENDIDA | CANCELADA
 

@@ -7,7 +7,8 @@ import {
   ParseIntPipe,
   Patch,
   Post,
-  Res
+  Res,
+  UseGuards,
 } from '@nestjs/common';
 import type { Response } from 'express';
 import type { CrearSuscripcionDto } from './dto/crear-suscripcion.dto';
@@ -16,14 +17,17 @@ import { aSuscripcion } from './dto/suscripcion-respuesta.dto';
 import { SuscripcionesService } from './suscripciones.service';
 import { SuscripcionNoEncontradaError } from '../dominio/errores';
 import { ModificacionSuscripcion } from '../dominio/entidades-repo';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { RolesGuard } from '../auth/guards/roles.guard';
+import { Roles } from '../auth/decorators/roles.decorator';
 
 @Controller('suscripciones')
-
 export class SuscripcionesController {
   constructor(private readonly servicio: SuscripcionesService) {}
 
-  // TODO: Tengo dudas de que puede que este no funcione, porque quizas el @Param se refiere al nombre de el atributo de la entidad, y este esta como idSuscripcion
   @Get(':id')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('CLIENTE', 'ADMINISTRADOR')
   async findById(@Param('id', ParseIntPipe) id: number) {
     const suscripcion = await this.servicio.findById(id);
     if (!suscripcion) {
@@ -33,12 +37,16 @@ export class SuscripcionesController {
   }
 
   @Get()
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('CLIENTE', 'ADMINISTRADOR')
   async findAll() {
     const lista = await this.servicio.findAll();
     return lista.map(aSuscripcion);
   }
 
   @Post()
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('CLIENTE', 'ADMINISTRADOR')
   @HttpCode(201)
   async save(
     @Body() dto: CrearSuscripcionDto,
@@ -50,6 +58,8 @@ export class SuscripcionesController {
   }
 
   @Patch(':id')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('CLIENTE', 'ADMINISTRADOR')
   async update(
     @Param('id', ParseIntPipe) id: number,
     @Body() dto: ModificarSuscripcionDto,

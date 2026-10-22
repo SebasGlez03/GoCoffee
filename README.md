@@ -1,7 +1,18 @@
-﻿# GoCoffee - Equipo #6
+﻿# GoCoffee
 
-### Para ejecutar el escenario de pruebas es necesario lo siguiente:
+Backend de suscripciones para café con NestJS + Prisma + PostgreSQL (Supabase).
 
-1. Abrir la terminal dentro de la carpeta del repositorio
-2. Entrar a la carpeta del proyecto con el comando: `cd go-coffee`
-3. Utilizar el comando: `npx tsx src/escenarios.ts`
+## Requisitos
+- Node.js 20+
+- npm
+- PostgreSQL / Supabase
+- VS Code (opcional, para usar peticiones.http)
+
+## 1. Clonar y instalar
+```bash
+git clone <repo-url>
+cd go-coffee
+npm install
+
+## 2. Correr el proyecto
+npm run start:dev
