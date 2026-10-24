@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { PLAN_REPOSITORY } from './infra/planes.tokens';
-import { PlanMemoriaRepository } from './infra/planes-memoria.repository';
+import type { PlanesRepository } from './dominio/planes.repository';
 import { Plan } from '../dominio/entidades';
 import {
   CantidadBolsasInvalidaError,
@@ -15,16 +15,16 @@ import {
 import { CrearPlanDTO } from './dto/crearPlanDto';
 import { PlanMapper } from './mapper/PlanMapper';
 import { ModificarPlanDTO } from './dto/modificarPlanDTO';
-import { EstadoPlan } from '../dominio/tipos';
+import { EstadoPlan, FrecuenciaEntrega } from '../dominio/tipos';
 
 @Injectable()
 export class PlanesService {
   constructor(
-    @Inject(PLAN_REPOSITORY) private readonly repo: PlanMemoriaRepository,
+    @Inject(PLAN_REPOSITORY) private readonly repo: PlanesRepository,
   ) {}
 
   async buscarPlanPorId(id: number): Promise<Plan> {
-    if (id === undefined || id === null || Number.isNaN(id) || id <= 0) {
+    if (!Number.isInteger(id) || id <= 0) {
       throw new IdInvalidoError();
     }
 
@@ -47,17 +47,18 @@ export class PlanesService {
     if (!dto.nombre || dto.nombre.trim() === '') {
       throw new NombrePlanVacioError();
     }
-    if (
-      dto.cantidadBolsas === undefined ||
-      dto.cantidadBolsas === null ||
-      dto.cantidadBolsas <= 0
-    ) {
+    if (!Number.isInteger(dto.cantidadBolsas) || dto.cantidadBolsas <= 0) {
       throw new CantidadBolsasInvalidaError();
     }
-    if (dto.precio === undefined || dto.precio === null || dto.precio < 0) {
+    if (!Number.isFinite(dto.precio) || dto.precio < 0) {
       throw new PrecioInvalidoError();
     }
-    if (!dto.frecuenciaEntrega) {
+    const frecuenciasValidas: FrecuenciaEntrega[] = [
+      'SEMANAL',
+      'QUINCENAL',
+      'MENSUAL',
+    ];
+    if (!frecuenciasValidas.includes(dto.frecuenciaEntrega)) {
       throw new FrecuenciaPlanInvalidoError();
     }
 
@@ -70,12 +71,7 @@ export class PlanesService {
       throw new PlanDatosRequeridosError();
     }
 
-    if (
-      dto.id === undefined ||
-      dto.id === null ||
-      Number.isNaN(dto.id) ||
-      dto.id <= 0
-    ) {
+    if (!Number.isInteger(dto.id) || dto.id <= 0) {
       throw new IdInvalidoError();
     }
 
@@ -91,15 +87,28 @@ export class PlanesService {
     }
 
     if (dto.cantidadBolsas !== undefined) {
-      if (dto.cantidadBolsas <= 0) {
+      if (!Number.isInteger(dto.cantidadBolsas) || dto.cantidadBolsas <= 0) {
         throw new CantidadBolsasInvalidaError();
       }
     }
 
     if (dto.precio !== undefined) {
-      if (dto.precio < 0) {
+      if (!Number.isFinite(dto.precio) || dto.precio < 0) {
         throw new PrecioInvalidoError();
       }
+    }
+    if (
+      dto.frecuenciaEntrega !== undefined &&
+      !['SEMANAL', 'QUINCENAL', 'MENSUAL'].includes(dto.frecuenciaEntrega)
+    ) {
+      throw new FrecuenciaPlanInvalidoError();
+    }
+    const estadosValidos: EstadoPlan[] = ['OBSOLETO', 'ACTUAL', 'INACTIVO'];
+    if (
+      dto.estadoPlan !== undefined &&
+      !estadosValidos.includes(dto.estadoPlan)
+    ) {
+      throw new EstadoPlanInvalidoError(dto.estadoPlan, estadosValidos);
     }
     const planModificado = PlanMapper.toUpdateDomain(dto, planExistente);
 
@@ -107,7 +116,7 @@ export class PlanesService {
   }
 
   async eliminarPlan(id: number): Promise<void> {
-    if (id === undefined || id === null || Number.isNaN(id) || id <= 0) {
+    if (!Number.isInteger(id) || id <= 0) {
       throw new IdInvalidoError();
     }
 

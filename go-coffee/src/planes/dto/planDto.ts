@@ -1,11 +1,12 @@
-import { EstadoPlan, FrecuenciaEntrega } from "../../dominio/tipos";
+import type { EstadoPlan, FrecuenciaEntrega } from '../../dominio/tipos';
 
-export interface PlanDTO{
-    nombre: string;
-    cantidadBolsas: number;
-    precio: number;
-    remplazadoPorId?: number;
-    fechaCreacion: Date;
-    estado: EstadoPlan;
-    frecuenciaEntrega: FrecuenciaEntrega;
+export interface PlanDTO {
+  idPlan?: number;
+  nombre: string;
+  cantidadBolsas: number;
+  precio: number;
+  remplazadoPorId?: number;
+  fechaCreacion: Date;
+  estado: EstadoPlan;
+  frecuenciaEntrega: FrecuenciaEntrega;
 }

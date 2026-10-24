@@ -8,6 +8,8 @@ import {
   Post,
   Put,
   Res,
+  UsePipes,
+  ValidationPipe,
 } from '@nestjs/common';
 import { PlanesService } from './planes.service';
 import { PlanMapper } from './mapper/PlanMapper';
@@ -17,6 +19,13 @@ import type { ModificarPlanDTO } from './dto/modificarPlanDTO';
 import { EstadoPlan } from '../dominio/tipos';
 
 @Controller('planes')
+@UsePipes(
+  new ValidationPipe({
+    whitelist: true,
+    forbidNonWhitelisted: true,
+    transform: true,
+  }),
+)
 export class PlanesController {
   constructor(private readonly servicio: PlanesService) {}
 

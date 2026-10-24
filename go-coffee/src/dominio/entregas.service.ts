@@ -1,7 +1,7 @@
 import { Suscripcion, Entrega } from './entidades';
 import { EstadoEntrega } from './tipos';
 import { EntregaRepository } from './entregas-repo';
-import { 
+import {
   SuscripcionInactivaError,
   EntregaDuplicadaError,
   ModificacionEntregaEnProcesoError,
@@ -26,9 +26,17 @@ export class EntregasDominioService {
     }
 
     // no se duplica la entrega de un mismo ciclo
-    const yaExisteCiclo = suscripcion.ciclos.some(
-      (c) => c.numCiclo === numCiclo && c.entrega !== null && c.entrega !== undefined,
-    );
+    const yaExisteCiclo =
+      suscripcion.ciclos.some(
+        (c) =>
+          c.numCiclo === numCiclo &&
+          c.entrega !== null &&
+          c.entrega !== undefined,
+      ) ||
+      (await this.entregaRepo.findBySuscripcionYCiclo(
+        suscripcion.idSuscripcion,
+        numCiclo,
+      )) !== null;
 
     if (yaExisteCiclo) {
       throw new EntregaDuplicadaError(numCiclo);
@@ -41,13 +49,20 @@ export class EntregasDominioService {
       estadoEntrega: 'PROGRAMADA',
     };
 
-    return await this.entregaRepo.save(nuevaEntrega);
+    return this.entregaRepo.save(
+      nuevaEntrega,
+      suscripcion.idSuscripcion,
+      numCiclo,
+    );
   }
 
-  
   // Valida si una entrega permite pausas o saltos (impidiendo cambios si ya está armada, enviada o entregada)
   validarModificacionEntrega(entrega: Entrega): void {
-    const estadosBloqueados: EstadoEntrega[] = ['ARMADA', 'ENVIADA', 'ENTREGADA'];
+    const estadosBloqueados: EstadoEntrega[] = [
+      'ARMADA',
+      'ENVIADA',
+      'ENTREGADA',
+    ];
 
     if (estadosBloqueados.includes(entrega.estadoEntrega)) {
       throw new ModificacionEntregaEnProcesoError();

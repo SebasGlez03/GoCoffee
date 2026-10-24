@@ -1,8 +1,32 @@
-import { FrecuenciaEntrega } from "../../dominio/tipos";
+import {
+  IsIn,
+  IsInt,
+  IsNotEmpty,
+  IsNumber,
+  IsString,
+  Min,
+} from 'class-validator';
+import type { FrecuenciaEntrega } from '../../dominio/tipos';
 
-export interface CrearPlanDTO {
-    nombre: string;
-    cantidadBolsas: number;
-    precio: number;
-    frecuenciaEntrega: FrecuenciaEntrega;
+const FRECUENCIAS_ENTREGA: FrecuenciaEntrega[] = [
+  'SEMANAL',
+  'QUINCENAL',
+  'MENSUAL',
+];
+
+export class CrearPlanDTO {
+  @IsString()
+  @IsNotEmpty()
+  nombre: string;
+
+  @IsInt()
+  @Min(1)
+  cantidadBolsas: number;
+
+  @IsNumber()
+  @Min(0)
+  precio: number;
+
+  @IsIn(FRECUENCIAS_ENTREGA)
+  frecuenciaEntrega: FrecuenciaEntrega;
 }
