@@ -1,0 +1,115 @@
+.gc-header {
+  background-color: var(--color-espresso);
+  border-bottom: 1px solid var(--color-espresso-border);
+  padding: 0.9rem 2rem;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.gc-header-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* Logo */
+.gc-logo {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  text-decoration: none;
+  color: var(--color-crema);
+  font-size: 1.35rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+}
+
+.gc-logo-icon {
+  font-size: 1.5rem;
+}
+
+/* Enlaces centrales */
+.gc-nav {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+}
+
+.gc-nav-link {
+  color: var(--color-latte);
+  text-decoration: none;
+  font-size: 0.95rem;
+  font-weight: 500;
+  padding: 0.35rem 0;
+  position: relative;
+  transition: color 0.2s ease;
+}
+
+.gc-nav-link:hover,
+.gc-nav-link.active {
+  color: var(--color-caramel);
+}
+
+/* Línea inferior sutil en enlace activo */
+.gc-nav-link.active::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background-color: var(--color-caramel);
+  border-radius: 2px;
+}
+
+/* Botones derechos */
+.gc-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+}
+
+.gc-btn-outline {
+  background: var(--color-espresso);
+  color: var(--color-crema);
+  border: 1px solid var(--color-border);
+  padding: 0.5rem 1.1rem;
+  border-radius: var(--radius-md);
+  font-size: 0.9rem;
+  font-weight: 700;
+  transition: all 0.2s ease;
+}
+
+.gc-btn-outline:hover {
+  border-color: var(--color-caramel);
+  background-color: var(--color-caramel-tint);
+}
+
+.gc-btn-primary {
+  background-color: var(--color-caramel);
+  color: var(--color-espresso);
+  border: none;
+  padding: 0.52rem 1.2rem;
+  border-radius: var(--radius-md);
+  font-size: 0.9rem;
+  font-weight: 700;
+  transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+.gc-btn-primary:hover {
+  background-color: var(--color-caramel-hover);
+}
+
+.gc-btn-primary:active {
+  transform: scale(0.98);
+}
+
+/* Ajuste básico para pantallas pequeñas */
+@media (max-width: 768px) {
+  .gc-nav {
+    display: none;
+  }
+}
