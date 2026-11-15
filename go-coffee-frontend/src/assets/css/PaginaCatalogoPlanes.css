@@ -1,0 +1,125 @@
+.gc-catalogo-page {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+/* Cabecera centrada */
+.gc-catalogo-header {
+  text-align: center;
+  max-width: 680px;
+  margin: 0 auto;
+  margin-top: 30px;
+}
+
+.gc-catalogo-eyebrow {
+  display: inline-block;
+  font-size: 1.5rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--color-mocha);
+  background-color: var(--color-latte);
+  padding: 0.3rem 0.85rem;
+  border-radius: 999px;
+  margin-bottom: 0.75rem;
+}
+
+.gc-catalogo-title {
+  font-size: 1.15rem;
+  color: var(--color-espresso);
+  margin-bottom: 0.10rem;
+}
+
+.gc-catalogo-subtitle {
+  font-size: 1.05rem;
+  color: var(--color-mocha);
+  margin-bottom: 1.5rem;
+}
+
+/* Filtros tipo píldora */
+.gc-catalogo-filtros {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.gc-filtro-pill {
+  background-color: var(--color-white);
+  color: var(--color-roast);
+  border: 1px solid var(--color-border);
+  padding: 0.45rem 1rem;
+  border-radius: 999px;
+  font-size: 0.88rem;
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+
+.gc-filtro-pill:hover {
+  border-color: var(--color-caramel);
+  background-color: var(--color-latte);
+}
+
+.gc-filtro-pill.is-active {
+  background-color: var(--color-espresso);
+  color: var(--color-crema);
+  border-color: var(--color-espresso);
+}
+
+/* Banner de confirmación al seleccionar */
+.gc-catalogo-banner {
+  background-color: var(--status-info-bg);
+  color: var(--status-info-text);
+  border: 1px solid rgba(25, 103, 210, 0.25);
+  border-radius: var(--radius-md);
+  padding: 0.85rem 1.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  font-size: 0.95rem;
+}
+
+.gc-banner-close {
+  background: none;
+  border: none;
+  color: inherit;
+  font-weight: 700;
+  font-size: 1rem;
+  padding: 0.2rem 0.4rem;
+}
+
+/* Grid responsivo de tarjetas */
+.gc-catalogo-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(265px, 1fr));
+  gap: 1.5rem;
+  align-items: stretch;
+}
+
+/* Estado vacío */
+.gc-catalogo-empty {
+  text-align: center;
+  background-color: var(--color-white);
+  border: 1px dashed var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: 3rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+.gc-btn-reset {
+  background-color: var(--color-caramel);
+  color: var(--color-espresso);
+  border: none;
+  padding: 0.55rem 1.2rem;
+  border-radius: var(--radius-md);
+  font-weight: 700;
+}
+
+.gc-btn-reset:hover {
+  background-color: var(--color-caramel-hover);
+}

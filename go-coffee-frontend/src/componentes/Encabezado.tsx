@@ -20,11 +20,8 @@ export function Encabezado() {
 
         {/* Botones de acción */}
         <div className="gc-actions">
-          <button type="button" className="gc-btn-outline">
-            Iniciar Sesión
-          </button>
           <button type="button" className="gc-btn-primary">
-            Suscribirme
+            Iniciar Sesion
           </button>
         </div>
       </div>
