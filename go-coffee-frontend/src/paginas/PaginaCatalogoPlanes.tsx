@@ -5,7 +5,7 @@ import "../assets/css/PaginaCatalogoPlanes.css";
 import { Link } from "react-router";
 import { Cargando } from "../componentes/Cargando";
 import { MensajeError } from "../componentes/MensajeError";
-import { usePlanes } from "../hooks/usePlanes";
+import { usePlanes } from "../hooks/UsePlanes";
 
 export function PaginaCatalogoPlanes() {
   const [planSeleccionado, setPlanSeleccionado] = useState<Plan | null>(null);

@@ -7,7 +7,6 @@ import "../assets/css/PaginaRegistro.css";
 export function PaginaRegistro() {
   const { registrar } = useSesion();
   const navegar = useNavigate();
-  const [nombre, setNombre] = useState("");
   const [correo, setCorreo] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
@@ -18,8 +17,8 @@ export function PaginaRegistro() {
     setError(null);
     setEnviando(true);
     try {
-      await registrar(nombre, correo, password);
-      navegar("/clases");
+      await registrar(correo, password);
+      navegar("/planes");
     } catch (e) {
       // 400: los mensajes del DTO, juntos. 409: "Ese correo ya esta registrado".
       setError(mensajeDeError(e, "No se pudo crear la cuenta."));
@@ -47,19 +46,6 @@ export function PaginaRegistro() {
         )}
 
         <form className="gc-auth-form" onSubmit={enviar}>
-          <div className="gc-form-group">
-            <label htmlFor="nombre">Nombre completo</label>
-            <input
-              id="nombre"
-              name="nombre"
-              type="text"
-              required
-              placeholder="Ej. Ana García"
-              value={nombre}
-              onChange={(e) => setNombre(e.target.value)}
-            />
-          </div>
-
           <div className="gc-form-group">
             <label htmlFor="email">Correo electrónico</label>
             <input

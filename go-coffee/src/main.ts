@@ -11,9 +11,8 @@ async function bootstrap() {
     credentials: true,
   });
 
-   app.useGlobalInterceptors(new SobreInterceptor());
+  app.useGlobalInterceptors(new SobreInterceptor());
 
-  await app.listen(process.env.PORT ?? 3000);
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,
@@ -24,6 +23,6 @@ async function bootstrap() {
       },
     }),
   );
-
+  await app.listen(process.env.PORT ?? 3000);
 }
 bootstrap();

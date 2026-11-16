@@ -23,8 +23,3 @@ export interface Usuario {
   email: string;
   rol: 'CLIENTE' | 'ADMINISTRADOR';
 }
-
-export interface Sesion {
-  token: string;
-  usuario: Usuario;
-}

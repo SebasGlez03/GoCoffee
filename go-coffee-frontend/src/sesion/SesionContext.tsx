@@ -6,7 +6,7 @@ interface ValorSesion {
   token: string | null;
   usuario: Usuario | null;
   entrar: (correo: string, password: string) => Promise<void>;
-  registrar: (nombre: string, correo: string, password: string) => Promise<void>;
+  registrar: (correo: string, password: string) => Promise<void>;
   salir: () => void;
 }
 
@@ -26,8 +26,8 @@ function leerSesion(): Sesion | null {
     if (
       typeof usuario === 'object' &&
       usuario !== null &&
-      'correo' in usuario &&
-      typeof usuario.correo === 'string' &&
+      'email' in usuario &&
+      typeof usuario.email === 'string' &&
       'idUsuario' in usuario &&
       typeof usuario.idUsuario === 'number' &&
       'rol' in usuario &&
@@ -38,7 +38,7 @@ function leerSesion(): Sesion | null {
         token,
         usuario: { 
           idUsuario: usuario.idUsuario,
-          email: usuario.correo,
+          email: usuario.email,
           rol: usuario.rol,
         },
       };
@@ -65,8 +65,8 @@ export function ProveedorSesion({ children }: { children: ReactNode }) {
     guardar(await servicio.entrar(correo, password));
   }
 
-  async function registrar(nombre: string, correo: string, password: string) {
-    guardar(await servicio.registrar(nombre, correo, password));
+  async function registrar(correo: string, password: string) {
+    guardar(await servicio.registrar(correo, password));
   }
 
   function salir() {

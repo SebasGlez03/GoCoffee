@@ -1,7 +1,10 @@
 import '../assets/css/Encabezado.css';
 import {NavLink, Link} from "react-router";
+import { useSesion } from '../sesion/SesionContext.tsx';
 
 export function Encabezado() {
+  const { usuario, salir } = useSesion();
+
   function selectorClaseActiva({isActive} : {isActive: boolean}){
     return isActive ? 'gc-nav-link active' : 'gc-nav-link';
   }
@@ -24,13 +27,17 @@ export function Encabezado() {
         </nav>
 
         {/* Botones de acción */}
-        <div className="gc-actions">
-          <Link to="/entrar">
-            <button type="button" className="gc-btn-primary">
-              Iniciar Sesion
-            </button>
-          </Link>
-        </div>
+        {usuario ? (
+            <>
+              <span className="barra__usuario">Hola, {usuario.email}</span>
+
+              <button className="gc-btn-primary" onClick={salir}>Salir</button>
+            </>
+          ) : (
+            <Link to="/entrar">
+              <button className="gc-btn-primary">Iniciar Sesion</button>
+              </Link>
+          )}
       </div>
     </header>
   );

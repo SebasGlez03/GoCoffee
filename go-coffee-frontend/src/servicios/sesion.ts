@@ -3,15 +3,15 @@ import { api, type Sobre } from './api.ts';
 
 interface RespuestaToken {
   access_token: string;
-  usuario: Usuario;
+  user: Usuario;
 }
 
 export async function entrar(correo: string, password: string): Promise<Sesion> {
-  const r = await api.post<Sobre<RespuestaToken>>('/auth/login', { correo, password });
-  return { token: r.data.data.access_token, usuario: r.data.data.usuario };
+  const r = await api.post<Sobre<RespuestaToken>>('/auth/login', { email: correo, password });
+  return { token: r.data.data.access_token, usuario: r.data.data.user };
 }
 
-export async function registrar(nombre: string, correo: string, password: string): Promise<Sesion> {
-  const r = await api.post<Sobre<RespuestaToken>>('/auth/registro', { nombre, correo, password });
-  return { token: r.data.data.access_token, usuario: r.data.data.usuario };
+export async function registrar(correo: string, password: string): Promise<Sesion> {
+  await api.post<Sobre<Usuario>>('/auth/register', { email: correo, password });
+  return entrar(correo, password);
 }

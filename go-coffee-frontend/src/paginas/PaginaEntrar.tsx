@@ -20,7 +20,7 @@ export function PaginaEntrar() {
     setEnviando(true);
     try {
       await entrar(correo, password);
-      navegar('/clases');
+      navegar('/planes');
     } catch (e) {
       setError(mensajeDeError(e, 'No se pudo iniciar sesión.'));
     } finally {
