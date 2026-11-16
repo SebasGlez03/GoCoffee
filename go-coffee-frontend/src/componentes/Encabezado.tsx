@@ -1,6 +1,11 @@
 import '../assets/css/Encabezado.css';
+import {NavLink} from "react-router";
 
 export function Encabezado() {
+  function selectorClaseActiva({isActive} : {isActive: boolean}){
+    return isActive ? 'gc-nav-link active' : 'gc-nav-link';
+  }
+
     return (
     <header className="gc-header">
       <div className="gc-header-container">
@@ -12,10 +17,10 @@ export function Encabezado() {
 
         {/* Enlaces de navegación estáticos */}
         <nav className="gc-nav">
-          <a href="#planes" className="gc-nav-link active">Planes</a>
-          <a href="#suscripcion" className="gc-nav-link">Mi Suscripción</a>
-          <a href="#entregas" className="gc-nav-link">Próximas Entregas</a>
-          <a href="#cobros" className="gc-nav-link">Cobros</a>
+          <NavLink to="/planes" className={selectorClaseActiva}>Planes</NavLink>
+          <NavLink to="/suscripcion" className={selectorClaseActiva}>Suscripcion</NavLink>
+          <NavLink to="/entregas" className={selectorClaseActiva}>Próximas Entregas</NavLink>
+          <NavLink to="/cobros" className={selectorClaseActiva}>Cobros</NavLink>
         </nav>
 
         {/* Botones de acción */}
