@@ -1,0 +1,11 @@
+.vacio {
+    padding: 3.5rem 1rem;
+    text-align: center;
+}
+
+.vacio__codigo {
+    font-size: 3.4rem;
+    font-weight: 800;
+    line-height: 1;
+    color: var(--linea);
+}

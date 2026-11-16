@@ -1,10 +1,12 @@
 import '../assets/css/PlanCard.css';
 
+type FrecuenciaEntrega = 'SEMANAL' | 'QUINCENAL' | 'MENSUAL';
+
 export interface Plan {
-  idPlan: string;
+  idPlan: number;
   nombre: string;
   cantidadBolsas: number;
-  tipoMolienda: string;
+  frecuenciaEntrega: FrecuenciaEntrega;
   precio: number;
 }
 
@@ -25,7 +27,7 @@ export function PlanCard({plan, destacado = false, onSeleccionar,}: PlanCardProp
         <div className="gc-plan-price-box">
           <span className="gc-plan-currency">$</span>
           <span className="gc-plan-price">{plan.precio.toFixed(2)}</span>
-          <span className="gc-plan-period">/ ciclo</span>
+          <span className="gc-plan-period">/{plan.frecuenciaEntrega}</span>
         </div>
       </header>
 
@@ -37,12 +39,6 @@ export function PlanCard({plan, destacado = false, onSeleccionar,}: PlanCardProp
             <strong>{plan.cantidadBolsas}</strong>{" "}
             {plan.cantidadBolsas === 1 ? "bolsa de café" : "bolsas de café"} por
             entrega
-          </span>
-        </li>
-        <li>
-          <span className="gc-feature-icon">⚙️</span>
-          <span>
-            Molienda: <strong>{plan.tipoMolienda}</strong>
           </span>
         </li>
         <li>

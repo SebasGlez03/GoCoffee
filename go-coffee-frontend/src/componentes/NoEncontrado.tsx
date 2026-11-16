@@ -1,3 +1,5 @@
+import '../assets/css/NoEncontrado.css';
+
 export function NoEncontrado() {
     return (
         <section className="vacio">

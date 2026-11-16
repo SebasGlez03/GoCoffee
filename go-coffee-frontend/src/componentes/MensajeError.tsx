@@ -1,3 +1,5 @@
+import '../assets/css/MensajeError.css';
+
 interface MensajeErrorProps {
     mensaje: string;
     onReintentar: () => void;
