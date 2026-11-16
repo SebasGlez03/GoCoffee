@@ -3,6 +3,8 @@ import { Route, Routes, Navigate} from "react-router";
 import { PaginaCatalogoPlanes } from "./paginas/PaginaCatalogoPlanes";
 import { PaginaDetallePlan } from "./paginas/PaginaDetallePlan";
 import { NoEncontrado } from "./componentes/NoEncontrado";
+import { PaginaRegistro } from "./paginas/PaginaRegistro";
+import { PaginaEntrar } from "./paginas/PaginaEntrar";
 
 function App() {
 
@@ -18,6 +20,9 @@ function App() {
           </Route>
 
           <Route path="*" element={<NoEncontrado />} />
+
+          <Route path="entrar" element={<PaginaEntrar/>} />
+          <Route path="registrar" element={<PaginaRegistro />} /> 
 
         </Route>
       </Routes>

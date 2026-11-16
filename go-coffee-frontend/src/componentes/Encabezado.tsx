@@ -1,5 +1,5 @@
 import '../assets/css/Encabezado.css';
-import {NavLink} from "react-router";
+import {NavLink, Link} from "react-router";
 
 export function Encabezado() {
   function selectorClaseActiva({isActive} : {isActive: boolean}){
@@ -10,10 +10,10 @@ export function Encabezado() {
     <header className="gc-header">
       <div className="gc-header-container">
         {/* Marca / Logo */}
-        <a href="#inicio" className="gc-logo">
+        <Link className='gc-link-logo' to="/planes">
           <span className="gc-logo-icon">☕</span>
           <span className="gc-logo-text">GO_COFFEE</span>
-        </a>
+        </Link>
 
         {/* Enlaces de navegación estáticos */}
         <nav className="gc-nav">
@@ -25,9 +25,11 @@ export function Encabezado() {
 
         {/* Botones de acción */}
         <div className="gc-actions">
-          <button type="button" className="gc-btn-primary">
-            Iniciar Sesion
-          </button>
+          <Link to="/entrar">
+            <button type="button" className="gc-btn-primary">
+              Iniciar Sesion
+            </button>
+          </Link>
         </div>
       </div>
     </header>
