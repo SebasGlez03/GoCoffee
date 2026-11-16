@@ -1,33 +1,32 @@
-import React, { useState } from "react";
-import { Link} from "react-router-dom";
+import { useState, type FormEvent } from 'react';
+import { Link, useNavigate } from 'react-router';
+import { useSesion } from '../sesion/SesionContext.tsx';
+import { mensajeDeError } from '../servicios/api.ts';
 import "../assets/css/PaginaEntrar.css";
-interface DatosLogin {
-  email: string;
-  password: string;
-}
+
 
 export function PaginaEntrar() {
+  const { entrar } = useSesion();
+  const navegar = useNavigate();
 
-  const [form, setForm] = useState<DatosLogin>({
-    email: "",
-    password: "",
-  });
-
-  const [cargando, setCargando] = useState(false);
+  const [correo, setCorreo] = useState('');
+  const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
+  const [enviando, setEnviando] = useState(false);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setForm((prev) => ({ ...prev, [name]: value }));
-    if (error) setError(null);
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
+  async function enviar(e: FormEvent) {
     e.preventDefault();
-    setCargando(true);
-    setError(null);
-
-  };
+    setError(null); // limpia el error del intento anterior
+    setEnviando(true);
+    try {
+      await entrar(correo, password);
+      navegar('/clases');
+    } catch (e) {
+      setError(mensajeDeError(e, 'No se pudo iniciar sesión.'));
+    } finally {
+      setEnviando(false); // salga bien o mal, se vuelve a habilitar el botón
+    }
+  }
 
   return (
     <section className="gc-auth-page">
@@ -47,7 +46,7 @@ export function PaginaEntrar() {
           </div>
         )}
 
-        <form className="gc-auth-form" onSubmit={handleSubmit}>
+        <form className="gc-auth-form" onSubmit={enviar}>
           <div className="gc-form-group">
             <label htmlFor="email">Correo electrónico</label>
             <input
@@ -57,9 +56,8 @@ export function PaginaEntrar() {
               required
               autoComplete="email"
               placeholder="correo@ejemplo.com"
-              value={form.email}
-              onChange={handleChange}
-              disabled={cargando}
+              value={correo}
+              onChange={(e) => setCorreo(e.target.value)}
             />
           </div>
 
@@ -72,18 +70,17 @@ export function PaginaEntrar() {
               required
               autoComplete="current-password"
               placeholder="Tu contraseña"
-              value={form.password}
-              onChange={handleChange}
-              disabled={cargando}
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
             />
           </div>
 
           <button
             type="submit"
             className="gc-auth-submit"
-            disabled={cargando}
+            disabled={enviando}
           >
-            {cargando ? "Iniciando sesión..." : "Entrar"}
+            {enviando ? 'Entrando…' : 'Entrar'}
           </button>
         </form>
 

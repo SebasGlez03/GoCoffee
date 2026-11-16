@@ -1,48 +1,32 @@
-import React, { useState } from "react";
-import { Link} from "react-router-dom";
+import { useState, type FormEvent } from "react";
+import { Link, useNavigate } from "react-router";
+import { useSesion } from "../sesion/SesionContext.tsx";
+import { mensajeDeError } from "../servicios/api.ts";
 import "../assets/css/PaginaRegistro.css";
 
-interface DatosRegistro {
-  nombre: string;
-  email: string;
-  password: string;
-  confirmarPassword: string;
-}
-
 export function PaginaRegistro() {
-
-  const [form, setForm] = useState<DatosRegistro>({
-    nombre: "",
-    email: "",
-    password: "",
-    confirmarPassword: "",
-  });
-
-  const [cargando, setCargando] = useState(false);
+  const { registrar } = useSesion();
+  const navegar = useNavigate();
+  const [nombre, setNombre] = useState("");
+  const [correo, setCorreo] = useState("");
+  const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
+  const [enviando, setEnviando] = useState(false);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setForm((prev) => ({ ...prev, [name]: value }));
-    if (error) setError(null);
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
+  async function enviar(e: FormEvent) {
     e.preventDefault();
-
-    if (form.password.length < 6) {
-      setError("La contraseña debe tener al menos 6 caracteres.");
-      return;
-    }
-
-    if (form.password !== form.confirmarPassword) {
-      setError("Las contraseñas no coinciden.");
-      return;
-    }
-
-    setCargando(true);
     setError(null);
-  };
+    setEnviando(true);
+    try {
+      await registrar(nombre, correo, password);
+      navegar("/clases");
+    } catch (e) {
+      // 400: los mensajes del DTO, juntos. 409: "Ese correo ya esta registrado".
+      setError(mensajeDeError(e, "No se pudo crear la cuenta."));
+    } finally {
+      setEnviando(false);
+    }
+  }
 
   return (
     <section className="gc-auth-page">
@@ -62,72 +46,51 @@ export function PaginaRegistro() {
           </div>
         )}
 
-          <form className="gc-auth-form" onSubmit={handleSubmit}>
-            <div className="gc-form-group">
-              <label htmlFor="nombre">Nombre completo</label>
-              <input
-                id="nombre"
-                name="nombre"
-                type="text"
-                required
-                placeholder="Ej. Ana García"
-                value={form.nombre}
-                onChange={handleChange}
-                disabled={cargando}
-              />
-            </div>
+        <form className="gc-auth-form" onSubmit={enviar}>
+          <div className="gc-form-group">
+            <label htmlFor="nombre">Nombre completo</label>
+            <input
+              id="nombre"
+              name="nombre"
+              type="text"
+              required
+              placeholder="Ej. Ana García"
+              value={nombre}
+              onChange={(e) => setNombre(e.target.value)}
+            />
+          </div>
 
-            <div className="gc-form-group">
-              <label htmlFor="email">Correo electrónico</label>
-              <input
-                id="email"
-                name="email"
-                type="email"
-                required
-                placeholder="correo@ejemplo.com"
-                value={form.email}
-                onChange={handleChange}
-                disabled={cargando}
-              />
-            </div>
+          <div className="gc-form-group">
+            <label htmlFor="email">Correo electrónico</label>
+            <input
+              id="email"
+              name="email"
+              type="email"
+              required
+              placeholder="correo@ejemplo.com"
+              value={correo}
+              onChange={(e) => setCorreo(e.target.value)}
+            />
+          </div>
 
-            <div className="gc-form-group">
-              <label htmlFor="password">Contraseña</label>
-              <input
-                id="password"
-                name="password"
-                type="password"
-                required
-                minLength={6}
-                placeholder="Mínimo 6 caracteres"
-                value={form.password}
-                onChange={handleChange}
-                disabled={cargando}
-              />
-            </div>
+          <div className="gc-form-group">
+            <label htmlFor="password">Contraseña</label>
+            <input
+              id="password"
+              name="password"
+              type="password"
+              required
+              minLength={6}
+              placeholder="Mínimo 6 caracteres"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
+          </div>
 
-            <div className="gc-form-group">
-              <label htmlFor="confirmarPassword">Confirmar contraseña</label>
-              <input
-                id="confirmarPassword"
-                name="confirmarPassword"
-                type="password"
-                required
-                placeholder="Repite tu contraseña"
-                value={form.confirmarPassword}
-                onChange={handleChange}
-                disabled={cargando}
-              />
-            </div>
-
-            <button
-              type="submit"
-              className="gc-auth-submit"
-              disabled={cargando}
-            >
-              {cargando ? "Creando cuenta..." : "Registrarme"}
-            </button>
-          </form>
+          <button type="submit" className="gc-auth-submit" disabled={enviando}>
+            {enviando ? 'Creando…' : 'Crear cuenta'}
+          </button>
+        </form>
 
         <footer className="gc-auth-footer">
           <p>

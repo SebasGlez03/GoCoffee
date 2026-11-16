@@ -12,3 +12,19 @@ export interface Plan {
 export type EstadoPlan = 'OBSOLETO' | 'ACTUAL' | 'INACTIVO';
 
 export type FrecuenciaEntrega = 'SEMANAL' | 'QUINCENAL' | 'MENSUAL';
+
+export interface Sesion {
+  token: string;
+  usuario: Usuario;
+}
+
+export interface Usuario {
+  idUsuario: number;
+  email: string;
+  rol: 'CLIENTE' | 'ADMINISTRADOR';
+}
+
+export interface Sesion {
+  token: string;
+  usuario: Usuario;
+}

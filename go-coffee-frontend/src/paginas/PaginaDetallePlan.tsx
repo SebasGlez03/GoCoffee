@@ -1,18 +1,35 @@
 import { useState } from "react";
 import { usePlan } from "../hooks/UsePlan";
-import { Link, useParams} from "react-router";
+import { Link, useLocation, useNavigate, useParams } from 'react-router';
+import { useSesion } from '../sesion/SesionContext.tsx';
 import { MensajeError } from "../componentes/MensajeError";
 import { Cargando } from "../componentes/Cargando";
 import '../assets/css/PaginaDetallePlan.css';
 
+/*interface Aviso {
+  tipo: 'exito' | 'error';
+  texto: string;
+}*/
+
 export function PaginaDetallePlan() {
   const { id } = useParams();
-
   const { plan, cargando, error, reintentar } = usePlan(Number(id));
+  const navegar = useNavigate();
+  const ubicacion = useLocation();
+  const { usuario } = useSesion();
+  //const [aviso, setAviso] = useState<Aviso | null>(null);
 
-  // Estado para la configuración de la suscripción
   const [diaEntrega, setDiaEntrega] = useState<string>("LUNES");
   const [direccionEnvio, setDireccionEnvio] = useState<string>("");
+
+  async function subscribirse(){
+    if(!usuario){
+      navegar('/entrar', { state: { desde: ubicacion.pathname } });
+      return;
+    }
+    console.log("Subscrito")
+  }
+
 
   if (cargando) return <Cargando />;
   if (error || !plan)
@@ -63,7 +80,7 @@ export function PaginaDetallePlan() {
           {/* Columna Derecha: Formulario de Contratación */}
           <form className="gc-detalle-form">
             <h2>Detalles de Entrega</h2>
-
+             {/*aviso && <p className={`aviso aviso--${aviso.tipo}`}>{aviso.texto}</p>*/}
             <div className="gc-form-group">
               <label htmlFor="direccion">Dirección de envío:</label>
               <input
@@ -96,7 +113,7 @@ export function PaginaDetallePlan() {
               </p>
             </div>
 
-            <button type="submit" className="gc-btn-primary gc-btn-block">
+            <button className="gc-btn-primary gc-btn-block" onClick={() => subscribirse()}>
               Confirmar y Suscribirme
             </button>
           </form>
