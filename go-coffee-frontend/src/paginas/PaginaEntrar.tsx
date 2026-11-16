@@ -1,5 +1,5 @@
 import { useState, type FormEvent } from 'react';
-import { Link, useNavigate } from 'react-router';
+import { Link, useLocation, useNavigate } from 'react-router';
 import { useSesion } from '../sesion/SesionContext.tsx';
 import { mensajeDeError } from '../servicios/api.ts';
 import "../assets/css/PaginaEntrar.css";
@@ -8,6 +8,9 @@ import "../assets/css/PaginaEntrar.css";
 export function PaginaEntrar() {
   const { entrar } = useSesion();
   const navegar = useNavigate();
+  const ubicacion = useLocation();
+  const desde: unknown = ubicacion.state?.desde;
+  const destino = typeof desde === 'string' && /^\/planes\/\d+$/.test(desde) ? desde : '/planes';
 
   const [correo, setCorreo] = useState('');
   const [password, setPassword] = useState('');
@@ -20,7 +23,7 @@ export function PaginaEntrar() {
     setEnviando(true);
     try {
       await entrar(correo, password);
-      navegar('/planes');
+      navegar(destino, { replace: true });
     } catch (e) {
       setError(mensajeDeError(e, 'No se pudo iniciar sesión.'));
     } finally {
@@ -87,7 +90,7 @@ export function PaginaEntrar() {
         <footer className="gc-auth-footer">
           <p>
             ¿Aún no tienes cuenta?{" "}
-            <Link to="/registrar" className="gc-auth-link">
+            <Link to="/registrar" state={{ desde: destino }} className="gc-auth-link">
               Regístrate aquí
             </Link>
           </p>

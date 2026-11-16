@@ -1,5 +1,5 @@
 import { useState, type FormEvent } from "react";
-import { Link, useNavigate } from "react-router";
+import { Link, useLocation, useNavigate } from "react-router";
 import { useSesion } from "../sesion/SesionContext.tsx";
 import { mensajeDeError } from "../servicios/api.ts";
 import "../assets/css/PaginaRegistro.css";
@@ -7,6 +7,9 @@ import "../assets/css/PaginaRegistro.css";
 export function PaginaRegistro() {
   const { registrar } = useSesion();
   const navegar = useNavigate();
+  const ubicacion = useLocation();
+  const desde: unknown = ubicacion.state?.desde;
+  const destino = typeof desde === 'string' && /^\/planes\/\d+$/.test(desde) ? desde : '/planes';
   const [correo, setCorreo] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
@@ -18,7 +21,7 @@ export function PaginaRegistro() {
     setEnviando(true);
     try {
       await registrar(correo, password);
-      navegar("/planes");
+      navegar(destino, { replace: true });
     } catch (e) {
       // 400: los mensajes del DTO, juntos. 409: "Ese correo ya esta registrado".
       setError(mensajeDeError(e, "No se pudo crear la cuenta."));
@@ -81,7 +84,7 @@ export function PaginaRegistro() {
         <footer className="gc-auth-footer">
           <p>
             ¿Ya tienes una cuenta?{" "}
-            <Link to="/entrar" className="gc-auth-link">
+            <Link to="/entrar" state={{ desde: destino }} className="gc-auth-link">
               Inicia sesión aquí
             </Link>
           </p>

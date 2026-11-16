@@ -3,6 +3,7 @@ import { Repository, NuevaSuscripcion } from "../../dominio/entidades-repo";
 
 
 export interface SuscripcionRepository extends Omit<Repository<Suscripcion>, 'save'> {
+  findByUsuarioYPlan(usuarioId: number, planId: number): Promise<Suscripcion | null>;
   findById(id: number): Promise<Suscripcion | null>;
   findAll(usuarioId?: number): Promise<Suscripcion[]>;
   save(entidad: NuevaSuscripcion): Promise<Suscripcion>;

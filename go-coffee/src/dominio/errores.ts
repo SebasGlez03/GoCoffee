@@ -5,6 +5,14 @@ export class ErrorDeDominio extends Error {}
 export class ErrorDeValidacion extends ErrorDeDominio {}
 export class ErrorNoEncontrado extends ErrorDeDominio {}
 export class ErrorDeReglaDeNegocios extends ErrorDeDominio {}
+export class ErrorDeConflicto extends ErrorDeDominio {}
+
+export class SuscripcionDuplicadaError extends ErrorDeConflicto {
+  constructor() {
+    super('Ya tienes una suscripción a este plan.');
+    this.name = 'SuscripcionDuplicadaError';
+  }
+}
 
 // Errores de validacion (HTTP 400)
 export class DiaSemanaEntregadoVacio extends ErrorDeValidacion {

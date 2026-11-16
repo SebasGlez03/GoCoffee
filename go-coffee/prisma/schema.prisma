@@ -11,9 +11,6 @@ model Usuario {
   email         String       @unique @db.VarChar(160)
   passwordHash  String       @db.VarChar(72)
   rol           String       @default("CLIENTE") @db.VarChar(20)
-  // Relacion anterior conservada para no perder asociaciones historicas ambiguas.
-  suscripcion   Suscripcion? @relation("SuscripcionAnterior", fields: [IdSuscripcion], references: [idSuscripcion])
-  IdSuscripcion Int?         @map("IdSuscripcion")
   suscripciones Suscripcion[] @relation("PropietarioSuscripcion")
 
   @@map("usuarios")
@@ -42,7 +39,6 @@ model Suscripcion {
   diaSemana          String
   fechaInicio        DateTime                      @default(now())
   estadoSuscripcion  String
-  usuarios           Usuario[] @relation("SuscripcionAnterior")
   // Nullable solo para registros anteriores cuyo propietario no se conoce.
   usuarioId          Int?
   usuario            Usuario? @relation("PropietarioSuscripcion", fields: [usuarioId], references: [idUsuario])

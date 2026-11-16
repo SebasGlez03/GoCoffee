@@ -1,13 +1,17 @@
 import { Injectable } from '@nestjs/common';
 import { SuscripcionRepository } from '../dominio/suscripcion.repository';
 import { Suscripcion } from '../../dominio/entidades';
-import { SuscripcionInactivaError } from '../../dominio/errores';
+import { SuscripcionDuplicadaError, SuscripcionInactivaError } from '../../dominio/errores';
 import type { NuevaSuscripcion } from '../../dominio/entidades-repo';
 
 @Injectable()
 export class SuscripcionMemoriaRepository implements SuscripcionRepository {
   private suscripciones: Suscripcion[] = [];
   private siguienteId = 1;
+
+  async findByUsuarioYPlan(usuarioId: number, planId: number): Promise<Suscripcion | null> {
+    return this.suscripciones.find((s) => s.usuarioId === usuarioId && s.planId === planId) ?? null;
+  }
 
   async findById(id: number): Promise<Suscripcion | null> {
     return (
@@ -20,6 +24,9 @@ export class SuscripcionMemoriaRepository implements SuscripcionRepository {
   }
 
   async save(entidad: NuevaSuscripcion): Promise<Suscripcion> {
+    if (this.suscripciones.some((s) => s.usuarioId === entidad.usuarioId && s.planId === entidad.planId)) {
+      throw new SuscripcionDuplicadaError();
+    }
     const nueva: Suscripcion = {
       idSuscripcion: this.siguienteId++,
       usuarioId: entidad.usuarioId,

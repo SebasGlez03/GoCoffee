@@ -1,5 +1,5 @@
 import { api, type Sobre } from './api.ts'; 
-import type { CrearSuscripcion, Plan } from '../tipos/tipos.ts';
+import type { CrearSuscripcion, Plan, Suscripcion } from '../tipos/tipos.ts';
 
 export async function traerPlanes(): Promise<Plan[]>{
     const respuesta = await api.get<Sobre<Plan[]>>('/planes');
@@ -11,6 +11,7 @@ export async function traerPlan(id: number): Promise<Plan> {
     return respuesta.data.data;
 }
 
-export async function subscribirse(datos: CrearSuscripcion): Promise<void> {
-  await api.post('/suscripciones', datos);
+export async function subscribirse(datos: CrearSuscripcion): Promise<Suscripcion> {
+  const respuesta = await api.post<Sobre<Suscripcion>>('/suscripciones', datos);
+  return respuesta.data.data;
 }

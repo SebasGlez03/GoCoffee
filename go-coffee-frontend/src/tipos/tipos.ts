@@ -37,6 +37,11 @@ export interface Sesion {
   usuario: Usuario;
 }
 
+export interface Suscripcion extends Omit<CrearSuscripcion, 'planId'> {
+  id: number;
+  usuarioId: number | null;
+}
+
 export interface Usuario {
   idUsuario: number;
   email: string;

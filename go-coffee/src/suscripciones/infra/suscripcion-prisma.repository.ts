@@ -4,10 +4,19 @@ import { Suscripcion } from '../../dominio/entidades';
 import { PrismaService } from '../../common/prisma/prisma.service';
 import type { Ciclo } from '../../dominio/entidades';
 import type { NuevaSuscripcion } from '../../dominio/entidades-repo';
+import { SuscripcionDuplicadaError } from '../../dominio/errores';
 
 @Injectable()
 export class SuscripcionPrismaRepository implements SuscripcionRepository {
   constructor(private readonly prisma: PrismaService) {}
+
+  async findByUsuarioYPlan(usuarioId: number, planId: number): Promise<Suscripcion | null> {
+    const item = await this.prisma.client.suscripcion.findFirst({
+      where: { usuarioId, planId },
+      include: { direccionEntrega: true },
+    });
+    return item ? this.toDomain(item) : null;
+  }
 
   async findById(id: number): Promise<Suscripcion | null> {
     const item = await this.prisma.client.suscripcion.findUnique({
@@ -36,7 +45,16 @@ export class SuscripcionPrismaRepository implements SuscripcionRepository {
   }
 
   async save(entidad: NuevaSuscripcion): Promise<Suscripcion> {
-    const created = await this.prisma.client.suscripcion.create({
+    const created = await this.prisma.client.$transaction(async (tx) => {
+      // Serializa las altas del mismo usuario antes de comprobar y crear.
+      // El bloqueo se libera al confirmar o revertir la transaccion.
+      await tx.$queryRaw`SELECT id FROM usuarios WHERE id = ${entidad.usuarioId} FOR UPDATE`;
+      const existente = await tx.suscripcion.findFirst({
+        where: { usuarioId: entidad.usuarioId, planId: entidad.planId },
+      });
+      if (existente) throw new SuscripcionDuplicadaError();
+
+      return tx.suscripcion.create({
       data: {
         usuario: { connect: { idUsuario: entidad.usuarioId } },
         plan: {
@@ -60,6 +78,7 @@ export class SuscripcionPrismaRepository implements SuscripcionRepository {
         direccionEntrega: true,
         plan: true,
       },
+      });
     });
 
     return this.toDomain(created);

@@ -16,6 +16,7 @@ import {
   IdInvalidoError,
   SuscripcionCanceladaError,
   SuscripcionNoEncontradaError,
+  SuscripcionDuplicadaError,
 } from '../dominio/errores';
 
 export type UsuarioSesion = Pick<Usuario, 'idUsuario' | 'rol'>;
@@ -39,6 +40,10 @@ export class SuscripcionesService {
 
   async save(dto: CrearSuscripcionDto, usuario: UsuarioSesion): Promise<Suscripcion> {
     this.validarCamposObligatorios(dto);
+
+    if (await this.repo.findByUsuarioYPlan(usuario.idUsuario, dto.planId)) {
+      throw new SuscripcionDuplicadaError();
+    }
 
     const fechaInicio = new Date(dto.fechaInicio);
     if (fechaInicio.getTime() < Date.now()) {

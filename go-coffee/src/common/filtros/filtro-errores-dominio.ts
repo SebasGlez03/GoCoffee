@@ -2,6 +2,7 @@ import { ArgumentsHost, ExceptionFilter, HttpStatus, Catch, Logger } from '@nest
 import type { Response } from 'express';
 import {
   ErrorDeDominio,
+  ErrorDeConflicto,
   ErrorDeReglaDeNegocios,
   ErrorDeValidacion,
   ErrorNoEncontrado,
@@ -12,6 +13,9 @@ export class FiltroErroresDominio implements ExceptionFilter {
   private readonly logger = new Logger('Dominio');
 
   private codigoPara(error: ErrorDeDominio): number {
+    if (error instanceof ErrorDeConflicto) {
+      return HttpStatus.CONFLICT;
+    }
     if (error instanceof ErrorDeValidacion) {
       return HttpStatus.BAD_REQUEST; //400
     }
