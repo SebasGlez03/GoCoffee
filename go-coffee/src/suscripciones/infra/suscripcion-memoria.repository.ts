@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { SuscripcionRepository } from '../dominio/suscripcion.repository';
 import { Suscripcion } from '../../dominio/entidades';
 import { SuscripcionInactivaError } from '../../dominio/errores';
+import type { NuevaSuscripcion } from '../../dominio/entidades-repo';
 
 @Injectable()
 export class SuscripcionMemoriaRepository implements SuscripcionRepository {
@@ -14,19 +15,20 @@ export class SuscripcionMemoriaRepository implements SuscripcionRepository {
     );
   }
 
-  async findAll(): Promise<Suscripcion[]> {
-    return this.suscripciones;
+  async findAll(usuarioId?: number): Promise<Suscripcion[]> {
+    return this.suscripciones.filter((s) => usuarioId === undefined || s.usuarioId === usuarioId);
   }
 
-  async save(entidad: Suscripcion): Promise<Suscripcion> {
+  async save(entidad: NuevaSuscripcion): Promise<Suscripcion> {
     const nueva: Suscripcion = {
       idSuscripcion: this.siguienteId++,
+      usuarioId: entidad.usuarioId,
       ciclos: entidad.ciclos,
       diaSemanaEntrega: entidad.diaSemanaEntrega,
       direccionEntrega: entidad.direccionEntrega,
       estadoSuscripcion: entidad.estadoSuscripcion,
       fechaInicio: entidad.fechaInicio,
-      planId: 1
+      planId: entidad.planId
     };
     this.suscripciones.push(nueva);
     return nueva;

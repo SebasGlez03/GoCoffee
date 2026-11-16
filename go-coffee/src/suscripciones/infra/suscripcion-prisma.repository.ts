@@ -3,6 +3,7 @@ import { SuscripcionRepository } from '../dominio/suscripcion.repository';
 import { Suscripcion } from '../../dominio/entidades';
 import { PrismaService } from '../../common/prisma/prisma.service';
 import type { Ciclo } from '../../dominio/entidades';
+import type { NuevaSuscripcion } from '../../dominio/entidades-repo';
 
 @Injectable()
 export class SuscripcionPrismaRepository implements SuscripcionRepository {
@@ -22,8 +23,9 @@ export class SuscripcionPrismaRepository implements SuscripcionRepository {
     return this.toDomain(item);
   }
 
-  async findAll(): Promise<Suscripcion[]> {
+  async findAll(usuarioId?: number): Promise<Suscripcion[]> {
     const items = await this.prisma.client.suscripcion.findMany({
+      where: usuarioId === undefined ? {} : { usuarioId },
       include: {
         direccionEntrega: true,
         plan: true,
@@ -33,9 +35,10 @@ export class SuscripcionPrismaRepository implements SuscripcionRepository {
     return items.map((item) => this.toDomain(item));
   }
 
-  async save(entidad: Suscripcion): Promise<Suscripcion> {
+  async save(entidad: NuevaSuscripcion): Promise<Suscripcion> {
     const created = await this.prisma.client.suscripcion.create({
       data: {
+        usuario: { connect: { idUsuario: entidad.usuarioId } },
         plan: {
           connect: { planId: entidad.planId },
         },
@@ -112,6 +115,7 @@ export class SuscripcionPrismaRepository implements SuscripcionRepository {
 
     return {
       idSuscripcion: item.idSuscripcion,
+      usuarioId: item.usuarioId ?? null,
       planId: item.planId,
       diaSemanaEntrega: item.diaSemana,
       fechaInicio: item.fechaInicio,

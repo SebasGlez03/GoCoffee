@@ -8,7 +8,7 @@ export interface Repository<T, ID = number> {
   delete(id: ID): Promise<void>;
 }
 
-export type NuevaSuscripcion = Omit<Suscripcion, 'idSuscripcion'>
+export type NuevaSuscripcion = Omit<Suscripcion, 'idSuscripcion' | 'usuarioId'> & { usuarioId: number }
 export type NuevaEntrega = Omit<Entrega,'idEntrega'>
 export type ModificacionSuscripcion = Partial<Suscripcion>
 

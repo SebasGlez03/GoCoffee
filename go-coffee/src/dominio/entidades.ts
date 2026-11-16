@@ -19,6 +19,7 @@ export interface Usuario {
 
 export interface Suscripcion {
   idSuscripcion: number;
+  usuarioId: number | null;
   planId: number;
   diaSemanaEntrega: DiaSemana;
   fechaInicio: Date;

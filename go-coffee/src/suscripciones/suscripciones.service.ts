@@ -1,4 +1,6 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { ForbiddenException, Inject, Injectable } from '@nestjs/common';
+import type { Usuario } from '../dominio/entidades';
+
 import { SUSCRIPCIONES_REPOSITORY } from './suscripciones.tokens';
 import type { SuscripcionRepository } from './dominio/suscripcion.repository';
 import { CrearSuscripcionDto } from './dto/crear-suscripcion.dto';
@@ -16,6 +18,8 @@ import {
   SuscripcionNoEncontradaError,
 } from '../dominio/errores';
 
+export type UsuarioSesion = Pick<Usuario, 'idUsuario' | 'rol'>;
+
 @Injectable()
 export class SuscripcionesService {
   constructor(
@@ -23,15 +27,17 @@ export class SuscripcionesService {
     private readonly repo: SuscripcionRepository,
   ) { }
 
-  findById(id: number): Promise<Suscripcion | null> {
-    return this.repo.findById(id);
+  async findById(id: number, usuario: UsuarioSesion): Promise<Suscripcion | null> {
+    const suscripcion = await this.repo.findById(id);
+    if (suscripcion) this.validarPropietario(suscripcion, usuario);
+    return suscripcion;
   }
 
-  findAll(): Promise<Suscripcion[]> {
-    return this.repo.findAll();
+  findAll(usuario: UsuarioSesion): Promise<Suscripcion[]> {
+    return this.repo.findAll(usuario.rol === 'ADMINISTRADOR' ? undefined : usuario.idUsuario);
   }
 
-  async save(dto: CrearSuscripcionDto): Promise<Suscripcion> {
+  async save(dto: CrearSuscripcionDto, usuario: UsuarioSesion): Promise<Suscripcion> {
     this.validarCamposObligatorios(dto);
 
     const fechaInicio = new Date(dto.fechaInicio);
@@ -48,6 +54,7 @@ export class SuscripcionesService {
     };
 
     return this.repo.save({
+      usuarioId: usuario.idUsuario,
       planId: dto.planId,
       fechaInicio,
       estadoSuscripcion: dto.estadoSuscripcion,
@@ -78,13 +85,19 @@ export class SuscripcionesService {
     }
   }
 
-  async update(id: number, modificacion: ModificacionSuscripcion): Promise<Suscripcion> {
+  private validarPropietario(suscripcion: Suscripcion, usuario: UsuarioSesion): void {
+    if (usuario.rol !== 'ADMINISTRADOR' && suscripcion.usuarioId !== usuario.idUsuario) {
+      throw new ForbiddenException('No tienes acceso a esta suscripción.');
+    }
+  }
+
+  async update(id: number, modificacion: ModificacionSuscripcion, usuario: UsuarioSesion): Promise<Suscripcion> {
    
    
     if (!Number.isInteger(id) || id <= 0) {
       throw new IdInvalidoError();
     }
-    if (modificacion.idSuscripcion != undefined) {
+    if (modificacion.idSuscripcion != undefined || modificacion.usuarioId !== undefined) {
       throw new IdInvalidoError();
     }
 
@@ -92,6 +105,7 @@ export class SuscripcionesService {
     if (!suscripcionExistente) {
       throw new SuscripcionNoEncontradaError(id);
     }
+    this.validarPropietario(suscripcionExistente, usuario);
     if (suscripcionExistente.estadoSuscripcion == 'CANCELADA') {
       throw new SuscripcionCanceladaError(id);
     }

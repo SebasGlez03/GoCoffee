@@ -4,6 +4,7 @@ import { DiaSemana, EstadoSuscripcion } from "../../dominio/tipos";
 
 export interface SuscripcionResponseDto {
   id: number;
+  usuarioId: number | null;
   diaSemanaEntrega: DiaSemana;
   fechaInicio: string;
   direccionEntrega: DireccionEntrega;
@@ -20,6 +21,7 @@ export interface SuscripcionResponseDto {
 export function aSuscripcion(s: Suscripcion): SuscripcionResponseDto {
   return {
     id: s.idSuscripcion,
+    usuarioId: s.usuarioId,
     diaSemanaEntrega: s.diaSemanaEntrega,
     fechaInicio: s.fechaInicio.toISOString(),
     direccionEntrega: s.direccionEntrega,

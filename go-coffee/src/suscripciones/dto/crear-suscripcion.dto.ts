@@ -18,6 +18,7 @@ import {
 import type { DiaSemana, EstadoSuscripcion } from '../../dominio/tipos';
 
 class DireccionEntregaDto {
+  @IsOptional()
   @IsInt()
   @Min(1)
   idDireccionEntrega?: number;
