@@ -1,7 +1,12 @@
-import { PrismaClient } from '@prisma/client';
 import * as bcrypt from 'bcryptjs';
+import 'dotenv/config';
+import { PrismaClient } from '@prisma/client'; // mantén la ruta de importación que ya tiene el archivo en la línea 1-3
+import { PrismaMariaDb } from '@prisma/adapter-mariadb';
 
-const prisma = new PrismaClient();
+const adapter = new PrismaMariaDb(
+  process.env.DATABASE_URL ?? 'mysql://root:12345678@localhost:3306/go-coffee'
+);
+const prisma = new PrismaClient({ adapter });
 
 async function main() {
   const adminEmail = 'admin@go-coffee.com';

@@ -61,7 +61,7 @@ export function PaginaCatalogoPlanes() {
         {planes.length > 0 && (
           <div className="gc-catalogo-grid">
             {planes.map((plan) => (
-              <Link key={plan.idPlan} to={`/planes/${plan.idPlan}`}>
+              <Link className="gc-link-router" key={plan.idPlan} to={`/planes/${plan.idPlan}`}>
                 <PlanCard
                   key={plan.idPlan}
                   plan={plan}

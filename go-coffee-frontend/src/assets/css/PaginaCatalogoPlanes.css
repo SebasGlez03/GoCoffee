@@ -123,3 +123,7 @@
 .gc-btn-reset:hover {
   background-color: var(--color-caramel-hover);
 }
+
+.gc-link-router{
+    text-decoration: none;
+}
