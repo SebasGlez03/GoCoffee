@@ -8,8 +8,7 @@ import "../assets/css/PaginaEntrar.css";
 export function PaginaEntrar() {
   const { entrar } = useSesion();
   const navegar = useNavigate();
-  const ubicacion = useLocation();
-  const desde: unknown = ubicacion.state?.desde;
+  const desde = (useLocation().state as { desde?: string } | null)?.desde ?? '/clases';
   const destino = typeof desde === 'string' && /^\/planes\/\d+$/.test(desde) ? desde : '/planes';
 
   const [correo, setCorreo] = useState('');
@@ -23,7 +22,7 @@ export function PaginaEntrar() {
     setEnviando(true);
     try {
       await entrar(correo, password);
-      navegar(destino, { replace: true });
+      navegar(desde, { replace: true });
     } catch (e) {
       setError(mensajeDeError(e, 'No se pudo iniciar sesión.'));
     } finally {

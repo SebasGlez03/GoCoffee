@@ -21,7 +21,7 @@ export function Encabezado() {
         {/* Enlaces de navegación estáticos */}
         <nav className="gc-nav">
           <NavLink to="/planes" className={selectorClaseActiva}>Planes</NavLink>
-          <NavLink to="/suscripcion" className={selectorClaseActiva}>Suscripcion</NavLink>
+          <NavLink to="/suscripciones" className={selectorClaseActiva}>Suscripciones</NavLink>
           <NavLink to="/entregas" className={selectorClaseActiva}>Próximas Entregas</NavLink>
           <NavLink to="/cobros" className={selectorClaseActiva}>Cobros</NavLink>
         </nav>
