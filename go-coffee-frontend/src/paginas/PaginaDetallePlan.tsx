@@ -59,7 +59,7 @@ export function PaginaDetallePlan() {
               <span className="gc-detalle-price">
                 ${plan.precio.toFixed(2)}
               </span>
-              <span className="gc-detalle-period">/ ciclo recurrente</span>
+              <span className="gc-detalle-period">/ {plan.frecuenciaEntrega}</span>
             </div>
 
             <ul className="gc-detalle-specs">
