@@ -3,5 +3,10 @@ import type {Plan} from '../tipos/tipos.ts';
 
 export async function traerPlanes(): Promise<Plan[]>{
     const respuesta = await api.get<Sobre<Plan[]>>('/planes');
-    return respuesta.data?.data ?? respuesta.data ?? [];
+    return respuesta.data.data;
+}
+
+export async function traerPlan(id: number): Promise<Plan> {
+    const respuesta = await api.get<Sobre<Plan>>(`/planes/${id}`);
+    return respuesta.data.data;
 }

@@ -3,8 +3,9 @@ export interface Plan {
     nombre: string;
     cantidadBolsas: number;
     precio: number;
-    fechaCreacion: Date;
-    estado: EstadoPlan;
+    remplazadoPorId?: number;
+    fechaCreacion?: Date;
+    estado?: EstadoPlan;
     frecuenciaEntrega: FrecuenciaEntrega;
 }
 

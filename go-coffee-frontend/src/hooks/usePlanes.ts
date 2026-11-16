@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import type {Plan} from '../tipos/tipos.ts';
 import { traerPlanes } from "../servicios/goCoffee.ts";
-import { mensajeDeError } from "../servicios/api";
+import { mensajeDeError } from "../servicios/api.ts";
 
 export function usePlanes() {
     const [planes, setPlanes] = useState<Plan[]>([]);
