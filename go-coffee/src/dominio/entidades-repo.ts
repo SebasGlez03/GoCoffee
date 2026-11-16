@@ -1,0 +1,14 @@
+import { Suscripcion, Entrega } from './entidades';
+
+export interface Repository<T, ID = number> {
+  findById(id: ID): Promise<T | null>;
+  findAll(): Promise<T[]>;
+  save(entidad: T): Promise<T>;
+  update(entidad: T): Promise<T>;
+  delete(id: ID): Promise<void>;
+}
+
+export type NuevaSuscripcion = Omit<Suscripcion, 'idSuscripcion'>
+export type NuevaEntrega = Omit<Entrega,'idEntrega'>
+export type ModificacionSuscripcion = Partial<Suscripcion>
+

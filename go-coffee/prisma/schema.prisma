@@ -1,0 +1,109 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Usuario {
+  idUsuario     Int          @id @default(autoincrement()) @map("id")
+  email         String       @unique @db.VarChar(160)
+  passwordHash  String       @db.VarChar(72)
+  rol           String       @default("CLIENTE") @db.VarChar(20)
+  suscripcion   Suscripcion? @relation(fields: [IdSuscripcion], references: [idSuscripcion])
+  IdSuscripcion Int?         @map("IdSuscripcion")
+
+  @@map("usuarios")
+}
+
+model Plan {
+  planId                  Int                           @id @default(autoincrement()) @map("id")
+  nombre                  String
+  cantidadBolsas          Int
+  precio                  Float
+  frecuenciaEntrega       String
+  fechaCreacion           DateTime                      @default(now())
+  estado                  String                        @default("ACTUAL")
+  remplazadoPorId         Int?
+  suscripciones           Suscripcion[]
+  solicitudesComoAnterior SolicitudCambioPlanSuscrito[] @relation("PlanAnterior")
+  solicitudesComoNuevo    SolicitudCambioPlanSuscrito[] @relation("PlanNuevo")
+
+  @@map("planes")
+}
+
+model Suscripcion {
+  idSuscripcion      Int                           @id @default(autoincrement()) @map("id")
+  plan               Plan                          @relation(fields: [planId], references: [planId])
+  planId             Int                           @map("planId")
+  diaSemana          String
+  fechaInicio        DateTime                      @default(now())
+  estadoSuscripcion  String
+  usuarios           Usuario[]
+  direccionEntrega   DireccionEntrega?             @relation(fields: [IdDireccionEntrega], references: [idDireccionEntrega])
+  IdDireccionEntrega Int?                          @map("IdDireccionEntrega")
+  ciclo              Ciclo?                        @relation(fields: [IdCiclo], references: [idCiclo])
+  IdCiclo            Int?                          @map("IdCiclo")
+  solicitudesCambio  SolicitudCambioPlanSuscrito[]
+
+  @@map("suscripciones")
+}
+
+model DireccionEntrega {
+  idDireccionEntrega Int           @id @default(autoincrement()) @map("id")
+  calle              String
+  codigoPostal       String
+  numeroCasa         String
+  estado             String
+  suscripcion        Suscripcion[]
+
+  @@map("direccionesEntrega")
+}
+
+model Ciclo {
+  idCiclo         Int           @id @default(autoincrement()) @map("id")
+  fechaProgramada DateTime
+  numCiclo        Int
+  suscripcion     Suscripcion[]
+  cobro           Cobro?        @relation(fields: [IdCobro], references: [idCobro])
+  IdCobro         Int?          @map("IdCobro")
+  entrega         Entrega?      @relation(fields: [IdEntrega], references: [idEntrega])
+  IdEntrega       Int?          @map("IdEntrega")
+
+  @@map("ciclos")
+}
+
+model Cobro {
+  idCobro     Int      @id @default(autoincrement()) @map("id")
+  fechaCobro  DateTime
+  estadoCobro String
+  ciclo       Ciclo[]
+
+  @@map("cobros")
+}
+
+model Entrega {
+  idEntrega     Int      @id @default(autoincrement()) @map("id")
+  fechaEntrega  DateTime
+  estadoEntrega String
+  ciclo         Ciclo[]
+
+  @@map("entregas")
+}
+
+model SolicitudCambioPlanSuscrito {
+  idSolicitud     Int         @id @default(autoincrement()) @map("id")
+  suscripcion     Suscripcion @relation(fields: [idSuscripcion], references: [idSuscripcion])
+  idSuscripcion   Int         @map("idSuscripcion")
+  planAnterior    Plan        @relation("PlanAnterior", fields: [idPlanAnterior], references: [planId])
+  idPlanAnterior  Int         @map("idPlanAnterior")
+  planNuevo       Plan        @relation("PlanNuevo", fields: [idPlanNuevo], references: [planId])
+  idPlanNuevo     Int         @map("idPlanNuevo")
+  fechaNuevoCiclo DateTime
+  fechaSolicitud  DateTime    @default(now())
+  fechaResolucion DateTime?
+  estadoSolicitud String
+
+  @@map("solicitudCambioPlanSuscritos")
+}
