@@ -66,6 +66,7 @@ model Ciclo {
   idCiclo         Int           @id @default(autoincrement()) @map("id")
   fechaProgramada DateTime
   numCiclo        Int
+  entregaPausada  Boolean       @default(false)
   suscripcionId   Int?
   suscripcion     Suscripcion? @relation(fields: [suscripcionId], references: [idSuscripcion])
   cobro           Cobro?        @relation(fields: [IdCobro], references: [idCobro])

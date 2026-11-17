@@ -50,6 +50,27 @@ export class CiclosService implements OnModuleInit, OnModuleDestroy {
       });
       return;
     }
+    if (s.estadoSuscripcion === 'PAUSADA') {
+      for (const c of s.ciclos) {
+        if (c.entrega?.estadoEntrega !== 'PROGRAMADA') continue;
+        await tx.ciclo.update({ where: { idCiclo: c.idCiclo }, data: {
+          entregaPausada: true, entrega: { update: { estadoEntrega: 'SALTADA' } },
+        } });
+      }
+      return;
+    }
+    if (s.estadoSuscripcion !== 'ACTIVA') return;
+    if (reanudando) {
+      for (const c of s.ciclos) {
+        if (!c.entregaPausada) continue;
+        const recuperar = c.entrega?.estadoEntrega === 'SALTADA';
+        await tx.ciclo.update({ where: { idCiclo: c.idCiclo }, data: {
+          entregaPausada: false,
+          ...(recuperar ? { entrega: { update: { estadoEntrega: 'PROGRAMADA' } } } : {}),
+        } });
+        if (recuperar && c.entrega) c.entrega.estadoEntrega = 'PROGRAMADA';
+      }
+    }
     const pendientes = s.ciclos.filter((c) => c.entrega?.estadoEntrega === 'PROGRAMADA');
     if (cambioDia || reanudando) {
       let anterior: Date | undefined;

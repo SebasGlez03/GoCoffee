@@ -68,6 +68,11 @@ function DetalleSuscripcion({ id }: { id: number }) {
                             </dd>
                         </div>
                     </dl>
+                    {suscripcion.estadoSuscripcion === 'PAUSADA' && (
+                        <p className="gc-detalle-suscripcion__aviso" role="status">
+                            Tu suscripción está pausada. Puedes reanudarla cuando quieras, sin elegir fechas.
+                        </p>
+                    )}
                     {suscripcion.estadoSuscripcion !== 'CANCELADA' && (
                         <form className="gc-detalle-suscripcion__dia" onSubmit={(e) => {
                             e.preventDefault();
