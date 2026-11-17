@@ -35,3 +35,10 @@ export async function pausarSuscripcion(id: number): Promise<Suscripcion> {
   });
   return respuesta.data.data;
 }
+
+export async function reanudarSuscripcion(id: number): Promise<Suscripcion> {
+  const respuesta = await api.patch<Sobre<Suscripcion>>(`/suscripciones/${id}`, {
+    estadoSuscripcion: 'ACTIVA',
+  });
+  return respuesta.data.data;
+}

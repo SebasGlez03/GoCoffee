@@ -12,7 +12,7 @@ export class SuscripcionPrismaRepository implements SuscripcionRepository {
 
   async findByUsuarioYPlan(usuarioId: number, planId: number): Promise<Suscripcion | null> {
     const item = await this.prisma.client.suscripcion.findFirst({
-      where: { usuarioId, planId },
+      where: { usuarioId, planId, estadoSuscripcion: { not: 'CANCELADA' } },
       include: { direccionEntrega: true },
     });
     return item ? this.toDomain(item) : null;
@@ -50,7 +50,11 @@ export class SuscripcionPrismaRepository implements SuscripcionRepository {
       // El bloqueo se libera al confirmar o revertir la transaccion.
       await tx.$queryRaw`SELECT id FROM usuarios WHERE id = ${entidad.usuarioId} FOR UPDATE`;
       const existente = await tx.suscripcion.findFirst({
-        where: { usuarioId: entidad.usuarioId, planId: entidad.planId },
+        where: {
+          usuarioId: entidad.usuarioId,
+          planId: entidad.planId,
+          estadoSuscripcion: { not: 'CANCELADA' },
+        },
       });
       if (existente) throw new SuscripcionDuplicadaError();
 

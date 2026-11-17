@@ -10,7 +10,7 @@ export class SuscripcionMemoriaRepository implements SuscripcionRepository {
   private siguienteId = 1;
 
   async findByUsuarioYPlan(usuarioId: number, planId: number): Promise<Suscripcion | null> {
-    return this.suscripciones.find((s) => s.usuarioId === usuarioId && s.planId === planId) ?? null;
+    return this.suscripciones.find((s) => s.usuarioId === usuarioId && s.planId === planId && s.estadoSuscripcion !== 'CANCELADA') ?? null;
   }
 
   async findById(id: number): Promise<Suscripcion | null> {
@@ -24,7 +24,7 @@ export class SuscripcionMemoriaRepository implements SuscripcionRepository {
   }
 
   async save(entidad: NuevaSuscripcion): Promise<Suscripcion> {
-    if (this.suscripciones.some((s) => s.usuarioId === entidad.usuarioId && s.planId === entidad.planId)) {
+    if (this.suscripciones.some((s) => s.usuarioId === entidad.usuarioId && s.planId === entidad.planId && s.estadoSuscripcion !== 'CANCELADA')) {
       throw new SuscripcionDuplicadaError();
     }
     const nueva: Suscripcion = {

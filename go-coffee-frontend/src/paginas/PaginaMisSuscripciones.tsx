@@ -22,7 +22,9 @@ export function PaginaMisSuscripciones() {
         suscripciones, cargando, error, reintentar,
         cancelarSuscripcion, cancelandoId, errorCancelacion, mensajeCancelacion,
         pausarSuscripcion, pausandoId,
+        reanudarSuscripcion, reanudandoId,
     } = useMisSuscripciones();
+    const procesando = cancelandoId !== null || pausandoId !== null || reanudandoId !== null;
 
     function confirmarCancelacion(id: number) {
         if (window.confirm(`¿Quieres cancelar la suscripción #${id}? Esta acción no se puede deshacer.`)) {
@@ -33,6 +35,12 @@ export function PaginaMisSuscripciones() {
     function confirmarPausa(id: number) {
         if (window.confirm(`¿Quieres pausar la suscripción #${id}?`)) {
             void pausarSuscripcion(id);
+        }
+    }
+
+    function confirmarReanudacion(id: number) {
+        if (window.confirm(`¿Quieres reanudar la suscripción #${id}?`)) {
+            void reanudarSuscripcion(id);
         }
     }
 
@@ -94,18 +102,29 @@ export function PaginaMisSuscripciones() {
                                     <button
                                         type="button"
                                         className="gc-suscripcion__pausar"
-                                        disabled={cancelandoId !== null || pausandoId !== null}
+                                        disabled={procesando}
                                         onClick={() => confirmarPausa(suscripcion.id)}
                                         aria-label={`Pausar suscripción #${suscripcion.id}`}
                                     >
                                         {pausandoId === suscripcion.id ? 'Pausando…' : 'Pausar suscripción'}
                                     </button>
                                 )}
+                                {suscripcion.estadoSuscripcion === 'PAUSADA' && (
+                                    <button
+                                        type="button"
+                                        className="gc-suscripcion__reanudar"
+                                        disabled={procesando}
+                                        onClick={() => confirmarReanudacion(suscripcion.id)}
+                                        aria-label={`Reanudar suscripción #${suscripcion.id}`}
+                                    >
+                                        {reanudandoId === suscripcion.id ? 'Reanudando…' : 'Reanudar suscripción'}
+                                    </button>
+                                )}
                                 {suscripcion.estadoSuscripcion !== 'CANCELADA' && (
                                     <button
                                         type="button"
                                         className="gc-suscripcion__cancelar"
-                                        disabled={cancelandoId !== null || pausandoId !== null}
+                                        disabled={procesando}
                                         onClick={() => confirmarCancelacion(suscripcion.id)}
                                         aria-label={`Cancelar suscripción #${suscripcion.id}`}
                                     >

@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import type { Suscripcion } from '../tipos/tipos.ts';
-import { desuscribirse, pausarSuscripcion as solicitarPausa, traerSuscripciones } from '../servicios/goCoffee.ts';
+import { desuscribirse, pausarSuscripcion as solicitarPausa, reanudarSuscripcion as solicitarReanudacion, traerSuscripciones } from '../servicios/goCoffee.ts';
 import { mensajeDeError } from '../servicios/api.ts';
 
 export function useMisSuscripciones() {
@@ -13,6 +13,7 @@ export function useMisSuscripciones() {
     const [mensajeCancelacion, setMensajeCancelacion] = useState<string | null>(null);
     const cancelacionEnCurso = useRef(false);
     const [pausandoId, setPausandoId] = useState<number | null>(null);
+    const [reanudandoId, setReanudandoId] = useState<number | null>(null);
 
     useEffect(() => {
         let vigente = true;
@@ -68,9 +69,28 @@ export function useMisSuscripciones() {
         }
     }
 
+    async function reanudarSuscripcion(id: number) {
+        if (cancelacionEnCurso.current) return;
+        cancelacionEnCurso.current = true;
+        setReanudandoId(id);
+        setErrorCancelacion(null);
+        setMensajeCancelacion(null);
+        try {
+            const actualizada = await solicitarReanudacion(id);
+            setSuscripciones((lista) => lista.map((s) => s.id === id ? actualizada : s));
+            setMensajeCancelacion(`Se reanudó la suscripción #${id}.`);
+        } catch (e) {
+            setErrorCancelacion(mensajeDeError(e, 'No se pudo reanudar la suscripción. Intenta de nuevo.'));
+        } finally {
+            cancelacionEnCurso.current = false;
+            setReanudandoId(null);
+        }
+    }
+
     return {
         suscripciones, cargando, error, reintentar,
         cancelarSuscripcion, cancelandoId, errorCancelacion, mensajeCancelacion,
         pausarSuscripcion, pausandoId,
+        reanudarSuscripcion, reanudandoId,
     };
 }

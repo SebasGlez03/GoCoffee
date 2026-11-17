@@ -208,3 +208,29 @@
   outline-offset: 3px;
 }
 
+.gc-suscripcion__reanudar {
+  margin-top: 1.5rem;
+  padding: 0.65rem 1rem;
+  border: 1px solid var(--status-success-text);
+  border-radius: 0.6rem;
+  background: var(--status-success-bg);
+  color: var(--status-success-text);
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.gc-suscripcion__reanudar:hover:not(:disabled) {
+  background: var(--color-latte);
+}
+
+.gc-suscripcion__reanudar:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
+
+.gc-suscripcion__reanudar:focus-visible {
+  outline: 3px solid var(--color-mocha);
+  outline-offset: 3px;
+}
+
