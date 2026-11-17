@@ -22,6 +22,7 @@ export function Encabezado() {
         <nav className="gc-nav">
           <NavLink to="/planes" className={selectorClaseActiva}>Planes</NavLink>
           <NavLink to="/suscripciones" className={selectorClaseActiva}>Suscripciones</NavLink>
+          {usuario?.rol === 'ADMINISTRADOR' && <NavLink to="/administracion/cambios-plan" className={selectorClaseActiva}>Cambios de plan</NavLink>}
           <NavLink to="/entregas" className={selectorClaseActiva}>Próximas Entregas</NavLink>
           <NavLink to="/cobros" className={selectorClaseActiva}>Cobros</NavLink>
         </nav>

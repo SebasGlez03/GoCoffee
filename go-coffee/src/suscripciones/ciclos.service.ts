@@ -38,12 +38,17 @@ export class CiclosService implements OnModuleInit, OnModuleDestroy {
 
   // Se ejecuta dentro de una transacción con la suscripción bloqueada.
   async sincronizar(tx: Prisma.TransactionClient, id: number, cambioDia = false, reanudando = false) {
+    // Serializa también cambios de plan y nuevas suscripciones del mismo cliente.
+    await tx.$queryRaw`SELECT u.id FROM usuarios u JOIN suscripciones s ON s.usuarioId = u.id WHERE s.id = ${id} FOR UPDATE`;
     const s = await tx.suscripcion.findUniqueOrThrow({
       where: { idSuscripcion: id }, include: { plan: true, ciclos: { include: { entrega: true, cobro: true }, orderBy: { numCiclo: 'asc' } } },
     });
     const ahora = new Date();
     const frecuencia = s.plan.frecuenciaEntrega as FrecuenciaEntrega;
     if (s.estadoSuscripcion === 'CANCELADA') {
+      await tx.solicitudCambioPlanSuscrito.updateMany({ where: { idSuscripcion: id,
+        OR: [{ estadoSolicitud: 'PENDIENTE' }, { estadoSolicitud: 'ACEPTADA', fechaAplicacion: null }] },
+        data: { estadoSolicitud: 'RECHAZADA', fechaResolucion: ahora } });
       for (const c of s.ciclos) {
         if (!c.entrega) continue;
         const pagada = c.cobro?.estadoCobro === 'PAGADO';
@@ -107,8 +112,30 @@ export class CiclosService implements OnModuleInit, OnModuleDestroy {
     // No fabrica ciclos atrasados después de una pausa o de un servidor apagado.
     while (fecha <= ahora) fecha = siguienteFecha(fecha, frecuencia);
     if (cambioDia) fecha = proximoDia(fecha, s.diaSemana as DiaSemana);
+    const numCiclo = (ultimo?.numCiclo ?? 0) + 1;
+    const cambio = await tx.solicitudCambioPlanSuscrito.findFirst({ where: {
+      idSuscripcion: id, estadoSolicitud: 'ACEPTADA', fechaAplicacion: null, numCicloAplicacion: numCiclo,
+    }, include: { planNuevo: true } });
+    let planCiclo = s.plan;
+    if (cambio) {
+      const duplicada = await tx.suscripcion.findFirst({ where: {
+        usuarioId: s.usuarioId, planId: cambio.idPlanNuevo, estadoSuscripcion: { not: 'CANCELADA' }, idSuscripcion: { not: id },
+      } });
+      if (duplicada || cambio.idPlanAnterior !== s.planId || cambio.planNuevo.estado !== 'ACTUAL' || cambio.planNuevo.precio !== cambio.precioNuevo) {
+        await tx.solicitudCambioPlanSuscrito.update({ where: { idSolicitud: cambio.idSolicitud }, data: {
+          estadoSolicitud: 'RECHAZADA', fechaResolucion: ahora,
+        } });
+      } else {
+        planCiclo = cambio.planNuevo;
+        await tx.suscripcion.update({ where: { idSuscripcion: id }, data: { planId: cambio.idPlanNuevo } });
+        await tx.solicitudCambioPlanSuscrito.update({ where: { idSolicitud: cambio.idSolicitud }, data: {
+          fechaAplicacion: ahora, fechaNuevoCiclo: fecha,
+        } });
+      }
+    }
     await tx.ciclo.create({ data: {
-      suscripcion: { connect: { idSuscripcion: id } }, numCiclo: (ultimo?.numCiclo ?? 0) + 1, fechaProgramada: fecha,
+      suscripcion: { connect: { idSuscripcion: id } }, numCiclo, fechaProgramada: fecha,
+      planIdAplicado: planCiclo.planId, precioAplicado: planCiclo.precio,
       entrega: { create: { fechaEntrega: fecha, estadoEntrega: 'PROGRAMADA' } },
     } });
   }

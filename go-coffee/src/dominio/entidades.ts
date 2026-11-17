@@ -56,6 +56,8 @@ export interface Plan {
 }
 
 export interface Ciclo {
+  planIdAplicado?: number | null;
+  precioAplicado?: number | null;
   idCiclo: number;
   fechaProgramada: Date;
   numCiclo: number;

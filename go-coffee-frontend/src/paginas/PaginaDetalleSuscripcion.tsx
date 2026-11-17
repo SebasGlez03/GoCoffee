@@ -2,6 +2,7 @@ import { Link, useParams } from 'react-router';
 import { useState } from 'react';
 import type { DiaSemana } from '../tipos/tipos';
 import { Cargando } from '../componentes/Cargando';
+import { CambioPlanSuscripcion } from '../componentes/CambioPlanSuscripcion';
 import { DatosPlanSuscripcion } from '../componentes/DatosPlanSuscripcion';
 import { ResumenCancelacion } from '../componentes/ResumenCancelacion';
 import { MensajeError } from '../componentes/MensajeError';
@@ -119,6 +120,7 @@ function DetalleSuscripcion({ id }: { id: number }) {
                             </button>
                         )}
                     </div>
+                    <CambioPlanSuscripcion key={`${suscripcion.id}-${suscripcion.estadoSuscripcion}-${suscripcion.plan?.idPlan}`} suscripcion={suscripcion} />
                 </article>
             )}
         </section>

@@ -8,6 +8,7 @@ import { PaginaEntrar } from "./paginas/PaginaEntrar";
 import { RutaProtegida } from "./componentes/RutaProtegida";
 import { PaginaMisSuscripciones } from "./paginas/PaginaMisSuscripciones";
 import { PaginaDetalleSuscripcion } from "./paginas/PaginaDetalleSuscripcion";
+import { PaginaCambiosPlan } from "./paginas/PaginaCambiosPlan";
 
 function App() {
 
@@ -27,6 +28,7 @@ function App() {
           <Route path="registrar" element={<PaginaRegistro />} /> 
 
           <Route element={<RutaProtegida/>}>
+            <Route path="administracion/cambios-plan" element={<PaginaCambiosPlan />} />
             <Route path="suscripciones">
               <Route index element={<PaginaMisSuscripciones/>} />
               <Route path=":id" element={<PaginaDetalleSuscripcion/>} />

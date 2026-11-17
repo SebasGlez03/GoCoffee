@@ -67,6 +67,8 @@ model Ciclo {
   fechaProgramada DateTime
   numCiclo        Int
   entregaPausada  Boolean       @default(false)
+  planIdAplicado  Int?
+  precioAplicado  Float?
   suscripcionId   Int?
   suscripcion     Suscripcion? @relation(fields: [suscripcionId], references: [idSuscripcion])
   cobro           Cobro?        @relation(fields: [IdCobro], references: [idCobro])
@@ -108,6 +110,12 @@ model SolicitudCambioPlanSuscrito {
   fechaSolicitud  DateTime    @default(now())
   fechaResolucion DateTime?
   estadoSolicitud String
+  numCicloAplicacion Int @default(1)
+  precioAnterior Float?
+  precioNuevo Float?
+  nombreAnterior String?
+  nombreNuevo String?
+  fechaAplicacion DateTime?
 
   @@map("solicitudCambioPlanSuscritos")
 }

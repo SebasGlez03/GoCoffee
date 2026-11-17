@@ -55,3 +55,35 @@ export interface Usuario {
   email: string;
   rol: 'CLIENTE' | 'ADMINISTRADOR';
 }
+
+export interface PlanCambio {
+  planId: number;
+  nombre: string;
+  precio: number;
+  cantidadBolsas: number;
+  frecuenciaEntrega: FrecuenciaEntrega;
+}
+
+export interface OpcionesCambioPlan {
+  planes: PlanCambio[];
+  numCicloAplicacion: number;
+  fechaNuevoCiclo: string;
+}
+
+export interface SolicitudCambioPlan {
+  idSolicitud: number;
+  idSuscripcion: number;
+  planAnterior: PlanCambio;
+  planNuevo: PlanCambio;
+  nombreAnterior: string | null;
+  nombreNuevo: string | null;
+  precioAnterior: number | null;
+  precioNuevo: number | null;
+  numCicloAplicacion: number;
+  fechaNuevoCiclo: string;
+  fechaSolicitud: string;
+  fechaResolucion: string | null;
+  fechaAplicacion: string | null;
+  estadoSolicitud: 'PENDIENTE' | 'ACEPTADA' | 'RECHAZADA';
+  suscripcion: { usuarioId: number | null; usuario: { email: string } | null };
+}

@@ -105,9 +105,6 @@ export class SuscripcionPrismaRepository implements SuscripcionRepository {
       await tx.suscripcion.update({
       where: { idSuscripcion: entidad.idSuscripcion },
       data: {
-        plan: {
-          connect: { planId: entidad.planId },
-        },
         diaSemana: entidad.diaSemanaEntrega,
         fechaInicio: entidad.fechaInicio,
         estadoSuscripcion: entidad.estadoSuscripcion,
@@ -158,6 +155,7 @@ export class SuscripcionPrismaRepository implements SuscripcionRepository {
   private toDomain(item: any): Suscripcion {
     const ciclos: Ciclo[] = (item.ciclos ?? []).map((c: any) => ({
       idCiclo: c.idCiclo, numCiclo: c.numCiclo, fechaProgramada: c.fechaProgramada,
+      planIdAplicado: c.planIdAplicado ?? null, precioAplicado: c.precioAplicado ?? null,
       entrega: c.entrega ? { idEntrega: c.entrega.idEntrega, fechaProgramada: c.entrega.fechaEntrega, estadoEntrega: c.entrega.estadoEntrega } : null,
       cobro: c.cobro ? { idCobro: c.cobro.idCobro, fechaCobro: c.cobro.fechaCobro, estado: c.cobro.estadoCobro } : null,
     }));
