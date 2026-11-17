@@ -48,7 +48,7 @@ async function verificar() {
     }, { timeout: 30_000 });
   } catch (e) {
     if (e !== rollback) throw e;
-    console.log('Flujo de cambio de plan verificado en MySQL. Transacción revertida.');
+    console.log('Flujo de cambio de plan verificado en PostgreSQL. Transacción revertida.');
   } finally { await prisma.client.$disconnect(); }
 }
 verificar().catch((e) => { console.error(e); process.exitCode = 1; });

@@ -19,6 +19,8 @@ describe('Programación de ciclos', () => {
     const s = { estadoSuscripcion: estado, fechaInicio: new Date('2026-11-20T12:00:00Z'),
       diaSemana: 'LUNES', plan: { frecuenciaEntrega: 'QUINCENAL' }, ciclos };
     const tx = {
+      $queryRaw: jest.fn(),
+      solicitudCambioPlanSuscrito: { findFirst: jest.fn().mockResolvedValue(null), updateMany: jest.fn(), update: jest.fn() },
       suscripcion: { findUniqueOrThrow: jest.fn().mockResolvedValue(s) },
       ciclo: { create: jest.fn(), update: jest.fn() }, entrega: { updateMany: jest.fn() },
     };

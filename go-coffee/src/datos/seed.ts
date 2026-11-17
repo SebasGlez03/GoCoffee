@@ -1,11 +1,9 @@
 import * as bcrypt from 'bcryptjs';
 import 'dotenv/config';
 import { PrismaClient } from '@prisma/client'; // mantén la ruta de importación que ya tiene el archivo en la línea 1-3
-import { PrismaMariaDb } from '@prisma/adapter-mariadb';
+import { crearAdaptadorPostgres } from '../common/prisma/crear-adaptador';
 
-const adapter = new PrismaMariaDb(
-  process.env.DATABASE_URL ?? 'mysql://root:12345678@localhost:3306/go-coffee'
-);
+const adapter = crearAdaptadorPostgres();
 const prisma = new PrismaClient({ adapter });
 
 async function main() {

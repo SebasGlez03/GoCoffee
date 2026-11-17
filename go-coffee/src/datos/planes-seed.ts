@@ -1,6 +1,6 @@
 import 'dotenv/config';
 import { Prisma, PrismaClient } from '@prisma/client';
-import { PrismaMariaDb } from '@prisma/adapter-mariadb';
+import { crearAdaptadorPostgres } from '../common/prisma/crear-adaptador';
 
 // Datos de ejemplo: ajustar precios y cantidades antes de usarlos en producción.
 const PLANES: Prisma.PlanCreateInput[] = [
@@ -28,12 +28,7 @@ const PLANES: Prisma.PlanCreateInput[] = [
 ];
 
 async function main() {
-  const databaseUrl = process.env.DATABASE_URL;
-  if (!databaseUrl) {
-    throw new Error('Configura DATABASE_URL en el archivo .env del backend.');
-  }
-
-  const adapter = new PrismaMariaDb(databaseUrl);
+  const adapter = crearAdaptadorPostgres();
   const prisma = new PrismaClient({ adapter });
 
   try {

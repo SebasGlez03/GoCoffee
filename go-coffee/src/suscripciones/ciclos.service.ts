@@ -39,7 +39,7 @@ export class CiclosService implements OnModuleInit, OnModuleDestroy {
   // Se ejecuta dentro de una transacción con la suscripción bloqueada.
   async sincronizar(tx: Prisma.TransactionClient, id: number, cambioDia = false, reanudando = false) {
     // Serializa también cambios de plan y nuevas suscripciones del mismo cliente.
-    await tx.$queryRaw`SELECT u.id FROM usuarios u JOIN suscripciones s ON s.usuarioId = u.id WHERE s.id = ${id} FOR UPDATE`;
+    await tx.$queryRaw`SELECT u.id FROM usuarios u JOIN suscripciones s ON s."usuarioId" = u.id WHERE s.id = ${id} FOR UPDATE`;
     const s = await tx.suscripcion.findUniqueOrThrow({
       where: { idSuscripcion: id }, include: { plan: true, ciclos: { include: { entrega: true, cobro: true }, orderBy: { numCiclo: 'asc' } } },
     });

@@ -13,7 +13,7 @@ export class CambiosPlanService {
 
   private async bloquear(tx: Prisma.TransactionClient, id: number) {
     await tx.$queryRaw`SELECT id FROM suscripciones WHERE id = ${id} FOR UPDATE`;
-    await tx.$queryRaw`SELECT u.id FROM usuarios u JOIN suscripciones s ON s.usuarioId = u.id WHERE s.id = ${id} FOR UPDATE`;
+    await tx.$queryRaw`SELECT u.id FROM usuarios u JOIN suscripciones s ON s."usuarioId" = u.id WHERE s.id = ${id} FOR UPDATE`;
   }
 
   private async suscripcion(tx: Prisma.TransactionClient, id: number, usuario: UsuarioSesion) {
