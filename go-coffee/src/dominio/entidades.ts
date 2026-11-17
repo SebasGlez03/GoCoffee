@@ -52,8 +52,8 @@ export interface Ciclo {
   idCiclo: number;
   fechaProgramada: Date;
   numCiclo: number;
-  entrega: Entrega;
-  cobro: Cobro;
+  entrega: Entrega | null;
+  cobro: Cobro | null;
 }
 
 export interface Cobro {

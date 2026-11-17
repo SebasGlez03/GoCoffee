@@ -1,19 +1,20 @@
+import { CiclosService } from '../ciclos.service';
 import { Injectable } from '@nestjs/common';
 import { SuscripcionRepository } from '../dominio/suscripcion.repository';
 import { Suscripcion } from '../../dominio/entidades';
 import { PrismaService } from '../../common/prisma/prisma.service';
 import type { Ciclo } from '../../dominio/entidades';
 import type { NuevaSuscripcion } from '../../dominio/entidades-repo';
-import { SuscripcionDuplicadaError } from '../../dominio/errores';
+import { SuscripcionDuplicadaError, SuscripcionCanceladaError } from '../../dominio/errores';
 
 @Injectable()
 export class SuscripcionPrismaRepository implements SuscripcionRepository {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(private readonly prisma: PrismaService, private readonly ciclosServicio: CiclosService) {}
 
   async findByUsuarioYPlan(usuarioId: number, planId: number): Promise<Suscripcion | null> {
     const item = await this.prisma.client.suscripcion.findFirst({
       where: { usuarioId, planId, estadoSuscripcion: { not: 'CANCELADA' } },
-      include: { direccionEntrega: true },
+      include: { direccionEntrega: true, ciclos: { include: { entrega: true, cobro: true } } },
     });
     return item ? this.toDomain(item) : null;
   }
@@ -24,6 +25,7 @@ export class SuscripcionPrismaRepository implements SuscripcionRepository {
       include: {
         direccionEntrega: true,
         plan: true,
+        ciclos: { include: { entrega: true, cobro: true }, orderBy: { numCiclo: 'asc' } },
       },
     });
 
@@ -38,6 +40,7 @@ export class SuscripcionPrismaRepository implements SuscripcionRepository {
       include: {
         direccionEntrega: true,
         plan: true,
+        ciclos: { include: { entrega: true, cobro: true }, orderBy: { numCiclo: 'asc' } },
       },
     });
 
@@ -58,7 +61,7 @@ export class SuscripcionPrismaRepository implements SuscripcionRepository {
       });
       if (existente) throw new SuscripcionDuplicadaError();
 
-      return tx.suscripcion.create({
+      const nueva = await tx.suscripcion.create({
       data: {
         usuario: { connect: { idUsuario: entidad.usuarioId } },
         plan: {
@@ -81,7 +84,13 @@ export class SuscripcionPrismaRepository implements SuscripcionRepository {
       include: {
         direccionEntrega: true,
         plan: true,
+        ciclos: { include: { entrega: true, cobro: true }, orderBy: { numCiclo: 'asc' } },
       },
+      });
+      await this.ciclosServicio.sincronizar(tx, nueva.idSuscripcion);
+      return tx.suscripcion.findUniqueOrThrow({
+        where: { idSuscripcion: nueva.idSuscripcion },
+        include: { direccionEntrega: true, ciclos: { include: { entrega: true, cobro: true }, orderBy: { numCiclo: 'asc' } } },
       });
     });
 
@@ -89,7 +98,11 @@ export class SuscripcionPrismaRepository implements SuscripcionRepository {
   }
 
   async update(entidad: Suscripcion): Promise<Suscripcion> {
-    const updated = await this.prisma.client.suscripcion.update({
+    const updated = await this.prisma.client.$transaction(async (tx) => {
+      await tx.$queryRaw`SELECT id FROM suscripciones WHERE id = ${entidad.idSuscripcion} FOR UPDATE`;
+      const anterior = await tx.suscripcion.findUniqueOrThrow({ where: { idSuscripcion: entidad.idSuscripcion } });
+      if (anterior.estadoSuscripcion === 'CANCELADA') throw new SuscripcionCanceladaError(entidad.idSuscripcion);
+      await tx.suscripcion.update({
       where: { idSuscripcion: entidad.idSuscripcion },
       data: {
         plan: {
@@ -121,9 +134,18 @@ export class SuscripcionPrismaRepository implements SuscripcionRepository {
       include: {
         direccionEntrega: true,
         plan: true,
+        ciclos: { include: { entrega: true, cobro: true }, orderBy: { numCiclo: 'asc' } },
       },
     });
 
+      await this.ciclosServicio.sincronizar(tx, entidad.idSuscripcion,
+        anterior.diaSemana !== entidad.diaSemanaEntrega || anterior.fechaInicio.getTime() !== entidad.fechaInicio.getTime(),
+        anterior.estadoSuscripcion !== 'ACTIVA' && entidad.estadoSuscripcion === 'ACTIVA');
+      return tx.suscripcion.findUniqueOrThrow({
+        where: { idSuscripcion: entidad.idSuscripcion },
+        include: { direccionEntrega: true, ciclos: { include: { entrega: true, cobro: true }, orderBy: { numCiclo: 'asc' } } },
+      });
+    });
     return this.toDomain(updated);
   }
 
@@ -134,7 +156,11 @@ export class SuscripcionPrismaRepository implements SuscripcionRepository {
   }
 
   private toDomain(item: any): Suscripcion {
-    const ciclos: Ciclo[] = [];
+    const ciclos: Ciclo[] = (item.ciclos ?? []).map((c: any) => ({
+      idCiclo: c.idCiclo, numCiclo: c.numCiclo, fechaProgramada: c.fechaProgramada,
+      entrega: c.entrega ? { idEntrega: c.entrega.idEntrega, fechaProgramada: c.entrega.fechaEntrega, estadoEntrega: c.entrega.estadoEntrega } : null,
+      cobro: c.cobro ? { idCobro: c.cobro.idCobro, fechaCobro: c.cobro.fechaCobro, estado: c.cobro.estadoCobro } : null,
+    }));
 
     return {
       idSuscripcion: item.idSuscripcion,

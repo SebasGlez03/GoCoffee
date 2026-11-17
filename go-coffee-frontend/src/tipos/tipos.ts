@@ -29,7 +29,7 @@ export interface CrearSuscripcion {
     estado: string;
   };
   estadoSuscripcion: EstadoSuscripcion;
-  ciclos: unknown[];
+
 }
 
 export interface Sesion {
@@ -38,6 +38,7 @@ export interface Sesion {
 }
 
 export interface Suscripcion extends Omit<CrearSuscripcion, 'planId'> {
+  ciclos: unknown[];
   id: number;
   usuarioId: number | null;
 }

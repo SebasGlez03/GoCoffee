@@ -1,4 +1,6 @@
 import { Link, useParams } from 'react-router';
+import { useState } from 'react';
+import type { DiaSemana } from '../tipos/tipos';
 import { Cargando } from '../componentes/Cargando';
 import { MensajeError } from '../componentes/MensajeError';
 import { useSuscripcion } from '../hooks/UseSuscripcion';
@@ -29,7 +31,9 @@ export function PaginaDetalleSuscripcion() {
 }
 
 function DetalleSuscripcion({ id }: { id: number }) {
-    const { suscripcion, cargando, error, reintentar, ejecutarAccion, accion, errorAccion, mensaje } = useSuscripcion(id);
+    const { suscripcion, cargando, error, reintentar, ejecutarAccion, accion, errorAccion, mensaje, guardarDiaEntrega } = useSuscripcion(id);
+    const [diaElegido, setDiaElegido] = useState<DiaSemana | null>(null);
+    const diaActual = diaElegido ?? suscripcion?.diaSemanaEntrega;
 
     function confirmar(tipo: 'pausar' | 'cancelar' | 'reanudar') {
         const aviso = tipo === 'cancelar' ? ' Esta acción no se puede deshacer.' : '';
@@ -64,6 +68,31 @@ function DetalleSuscripcion({ id }: { id: number }) {
                             </dd>
                         </div>
                     </dl>
+                    {suscripcion.estadoSuscripcion !== 'CANCELADA' && (
+                        <form className="gc-detalle-suscripcion__dia" onSubmit={(e) => {
+                            e.preventDefault();
+                            if (diaActual && diaActual !== suscripcion.diaSemanaEntrega) {
+                                void guardarDiaEntrega(diaActual);
+                            }
+                        }}>
+                            <label htmlFor="dia-entrega">Cambiar día de entrega</label>
+                            <div>
+                                <select
+                                    id="dia-entrega"
+                                    value={diaActual}
+                                    disabled={accion !== null}
+                                    onChange={(e) => setDiaElegido(e.target.value as DiaSemana)}
+                                >
+                                    {Object.entries(dias).map(([valor, nombre]) => (
+                                        <option key={valor} value={valor}>{nombre}</option>
+                                    ))}
+                                </select>
+                                <button type="submit" disabled={accion !== null || diaActual === suscripcion.diaSemanaEntrega}>
+                                    {accion === 'dia' ? 'Guardando…' : 'Guardar día de entrega'}
+                                </button>
+                            </div>
+                        </form>
+                    )}
                     <div className="gc-detalle-suscripcion__acciones">
                         {suscripcion.estadoSuscripcion === 'ACTIVA' && (
                             <button type="button" disabled={accion !== null} onClick={() => confirmar('pausar')}>

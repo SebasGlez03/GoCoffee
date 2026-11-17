@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
-import type { Suscripcion } from '../tipos/tipos';
-import { traerSuscripcion, pausarSuscripcion, desuscribirse, reanudarSuscripcion } from '../servicios/goCoffee';
+import type { DiaSemana, Suscripcion } from '../tipos/tipos';
+import { traerSuscripcion, pausarSuscripcion, desuscribirse, reanudarSuscripcion, cambiarDiaEntrega } from '../servicios/goCoffee';
 import { mensajeDeError } from '../servicios/api';
 
 export function useSuscripcion(id: number) {
@@ -8,7 +8,7 @@ export function useSuscripcion(id: number) {
         id: number; intento: number; suscripcion: Suscripcion | null; error: string | null;
     } | null>(null);
     const [intento, setIntento] = useState(0);
-    const [accion, setAccion] = useState<'pausar' | 'cancelar' | 'reanudar' | null>(null);
+    const [accion, setAccion] = useState<'pausar' | 'cancelar' | 'reanudar' | 'dia' | null>(null);
     const [errorAccion, setErrorAccion] = useState<string | null>(null);
     const [mensaje, setMensaje] = useState<string | null>(null);
     const enCurso = useRef(false);
@@ -56,6 +56,26 @@ export function useSuscripcion(id: number) {
         return () => { vigente = false; };
     }, [id, intento]);
 
+    async function guardarDiaEntrega(dia: DiaSemana) {
+        if (enCurso.current) return;
+        enCurso.current = true;
+        setAccion('dia');
+        setErrorAccion(null);
+        setMensaje(null);
+        try {
+            const suscripcion = await cambiarDiaEntrega(id, dia);
+            if (montado.current) {
+                setResultado({ id, intento, suscripcion, error: null });
+                setMensaje('Se actualizó el día de entrega.');
+            }
+        } catch (e) {
+            if (montado.current) setErrorAccion(mensajeDeError(e, 'No se pudo cambiar el día de entrega. Intenta de nuevo.'));
+        } finally {
+            enCurso.current = false;
+            if (montado.current) setAccion(null);
+        }
+    }
+
     const vigente = resultado?.id === id && resultado?.intento === intento;
     return {
         suscripcion: vigente ? resultado.suscripcion : null,
@@ -63,5 +83,6 @@ export function useSuscripcion(id: number) {
         error: vigente ? resultado.error : null,
         reintentar: () => setIntento((n) => n + 1),
         ejecutarAccion, accion, errorAccion, mensaje,
+        guardarDiaEntrega,
     };
 }

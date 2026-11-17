@@ -1,11 +1,10 @@
 import {
-  IsArray,
   IsDateString,
   IsIn,
   IsObject,
   IsOptional,
 } from 'class-validator';
-import type { DireccionEntrega, Ciclo } from '../../dominio/entidades';
+import type { DireccionEntrega } from '../../dominio/entidades';
 import type { DiaSemana, EstadoSuscripcion } from '../../dominio/tipos';
 import { DIAS_SEMANA, ESTADOS_SUSCRIPCION} from '../../dominio/tipos';
 
@@ -26,7 +25,5 @@ export class ModificarSuscripcionDto {
   @IsIn(ESTADOS_SUSCRIPCION)
   estadoSuscripcion?: EstadoSuscripcion;
   
-  @IsOptional()
-  @IsArray()
-  ciclos?: Ciclo[];
+
 }

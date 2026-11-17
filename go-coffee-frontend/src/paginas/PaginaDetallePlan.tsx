@@ -75,7 +75,6 @@ function DetallePlan({ id }: { id: number }) {
           estado: estado.trim(),
         },
         estadoSuscripcion: 'ACTIVA',
-        ciclos: [],
       });
       setConfirmacion(creada);
     } catch (e) {

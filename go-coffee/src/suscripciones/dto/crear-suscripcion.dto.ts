@@ -58,6 +58,8 @@ export class CrearSuscripcionDto {
   @IsEnum(ESTADOS_SUSCRIPCION)
   estadoSuscripcion!: EstadoSuscripcion;
 
+  // Compatibilidad con clientes anteriores; el backend genera los ciclos.
+  @IsOptional()
   @IsArray()
-  ciclos!: any[];
+  ciclos?: any[];
 }

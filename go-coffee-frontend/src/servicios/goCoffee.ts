@@ -1,5 +1,5 @@
 import { api, type Sobre } from './api.ts'; 
-import type { CrearSuscripcion, Plan, Suscripcion } from '../tipos/tipos.ts';
+import type { CrearSuscripcion, DiaSemana, Plan, Suscripcion } from '../tipos/tipos.ts';
 
 export async function traerPlanes(): Promise<Plan[]>{
     const respuesta = await api.get<Sobre<Plan[]>>('/planes');
@@ -45,5 +45,10 @@ export async function reanudarSuscripcion(id: number): Promise<Suscripcion> {
   const respuesta = await api.patch<Sobre<Suscripcion>>(`/suscripciones/${id}`, {
     estadoSuscripcion: 'ACTIVA',
   });
+  return respuesta.data.data;
+}
+
+export async function cambiarDiaEntrega(id: number, diaSemanaEntrega: DiaSemana): Promise<Suscripcion> {
+  const respuesta = await api.patch<Sobre<Suscripcion>>(`/suscripciones/${id}`, { diaSemanaEntrega });
   return respuesta.data.data;
 }

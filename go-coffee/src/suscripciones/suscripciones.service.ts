@@ -8,7 +8,6 @@ import type { ModificacionSuscripcion } from '../dominio/entidades-repo';
 import { Suscripcion } from '../dominio/entidades';
 import {
   CambioRetroactivoError,
-  CiclosSuscripcionesVacios,
   DiaSemanaEntregadoVacio,
   DireccionEntregaVacia,
   EstadoSuscripcionVacio,
@@ -65,7 +64,7 @@ export class SuscripcionesService {
       estadoSuscripcion: dto.estadoSuscripcion,
       direccionEntrega,
       diaSemanaEntrega: dto.diaSemanaEntrega,
-      ciclos: dto.ciclos,
+      ciclos: [],
     });
   }
 
@@ -84,9 +83,6 @@ export class SuscripcionesService {
     }
     if (!dto.estadoSuscripcion) {
       throw new EstadoSuscripcionVacio();
-    }
-    if (!dto.ciclos) {
-      throw new CiclosSuscripcionesVacios();
     }
   }
 
@@ -124,9 +120,6 @@ export class SuscripcionesService {
     if (modificacion.estadoSuscripcion != undefined && !modificacion.estadoSuscripcion) {
       throw new EstadoSuscripcionVacio();
     }
-    if (modificacion.ciclos != undefined && !modificacion.ciclos) {
-      throw new CiclosSuscripcionesVacios();
-    }
     if (modificacion.fechaInicio != undefined) {
       const fecha = new Date(modificacion.fechaInicio);
       if (fecha.getTime() < Date.now()) {
@@ -148,7 +141,6 @@ export class SuscripcionesService {
       ...(modificacion.estadoSuscripcion !== undefined && {
         estadoSuscripcion: modificacion.estadoSuscripcion,
       }),
-      ...(modificacion.ciclos !== undefined && { ciclos: modificacion.ciclos }),
     };
 
     return this.repo.update(suscripcionActualizada);
