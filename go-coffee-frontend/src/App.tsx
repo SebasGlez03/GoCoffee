@@ -7,6 +7,7 @@ import { PaginaRegistro } from "./paginas/PaginaRegistro";
 import { PaginaEntrar } from "./paginas/PaginaEntrar";
 import { RutaProtegida } from "./componentes/RutaProtegida";
 import { PaginaMisSuscripciones } from "./paginas/PaginaMisSuscripciones";
+import { PaginaDetalleSuscripcion } from "./paginas/PaginaDetalleSuscripcion";
 
 function App() {
 
@@ -26,7 +27,10 @@ function App() {
           <Route path="registrar" element={<PaginaRegistro />} /> 
 
           <Route element={<RutaProtegida/>}>
-            <Route path="suscripciones" element={<PaginaMisSuscripciones/>}/>
+            <Route path="suscripciones">
+              <Route index element={<PaginaMisSuscripciones/>} />
+              <Route path=":id" element={<PaginaDetalleSuscripcion/>} />
+            </Route>
           </Route>
 
           <Route path="*" element={<NoEncontrado />} />

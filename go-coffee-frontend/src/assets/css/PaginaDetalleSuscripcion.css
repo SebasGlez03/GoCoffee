@@ -1,0 +1,60 @@
+.gc-detalle-suscripcion {
+  width: min(850px, 100%);
+  margin: 0 auto;
+  padding: 2.5rem 1.25rem 4rem;
+}
+
+.gc-detalle-suscripcion__volver {
+  display: inline-block;
+  margin-bottom: 1.5rem;
+  color: var(--color-mocha);
+  font-weight: 600;
+}
+
+.gc-detalle-suscripcion h1 {
+  font-size: clamp(1.8rem, 5vw, 2.5rem);
+  color: var(--color-espresso);
+}
+
+.gc-detalle-suscripcion header p {
+  color: var(--color-mocha);
+  margin: 0.5rem 0 2rem;
+}
+
+.gc-detalle-suscripcion__tarjeta {
+  padding: 1.75rem;
+  border: 1px solid var(--color-border);
+  border-radius: 1rem;
+  background: var(--color-white);
+}
+
+.gc-detalle-suscripcion__tarjeta h2 {
+  font-size: 1.25rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.gc-detalle-suscripcion dl {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.5rem;
+  margin-top: 1.5rem;
+  overflow-wrap: anywhere;
+}
+
+.gc-detalle-suscripcion dt {
+  color: var(--color-mocha);
+  margin-bottom: 0.25rem;
+}
+
+.gc-detalle-suscripcion dd {
+  font-weight: 600;
+}
+
+.gc-detalle-suscripcion__direccion {
+  grid-column: 1 / -1;
+}
+
+@media (max-width: 500px) {
+  .gc-detalle-suscripcion dl { grid-template-columns: 1fr; }
+}

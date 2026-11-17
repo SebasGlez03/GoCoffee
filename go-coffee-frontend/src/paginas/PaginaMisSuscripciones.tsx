@@ -98,6 +98,9 @@ export function PaginaMisSuscripciones() {
                                     </div>
                                 </dl>
                                 <div className="gc-suscripcion__acciones">
+                                <Link className="gc-suscripcion__detalle" to={`/suscripciones/${suscripcion.id}`}>
+                                    Ver detalle
+                                </Link>
                                 {suscripcion.estadoSuscripcion === 'ACTIVA' && (
                                     <button
                                         type="button"
@@ -128,7 +131,7 @@ export function PaginaMisSuscripciones() {
                                         onClick={() => confirmarCancelacion(suscripcion.id)}
                                         aria-label={`Cancelar suscripción #${suscripcion.id}`}
                                     >
-                                        {cancelandoId === suscripcion.id ? 'Cancelando…' : 'Desuscribirme'}
+                                        {cancelandoId === suscripcion.id ? 'Cancelando…' : 'Quitar Suscripcion'}
                                     </button>
                                 )}
                                 </div>

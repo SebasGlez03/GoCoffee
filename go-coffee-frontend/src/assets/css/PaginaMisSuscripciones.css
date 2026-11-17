@@ -234,3 +234,21 @@
   outline-offset: 3px;
 }
 
+.gc-suscripcion__detalle {
+  display: inline-flex;
+  align-items: center;
+  margin-top: 1.5rem;
+  padding: 0.65rem 1rem;
+  border-radius: 0.6rem;
+  background: var(--color-caramel);
+  color: var(--color-espresso);
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.gc-suscripcion__detalle:hover { background: var(--color-caramel-hover); }
+.gc-suscripcion__detalle:focus-visible {
+  outline: 3px solid var(--color-mocha);
+  outline-offset: 3px;
+}
+
