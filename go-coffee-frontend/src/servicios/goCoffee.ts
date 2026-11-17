@@ -28,3 +28,10 @@ export async function desuscribirse(id: number): Promise<Suscripcion> {
   });
   return respuesta.data.data;
 }
+
+export async function pausarSuscripcion(id: number): Promise<Suscripcion> {
+  const respuesta = await api.patch<Sobre<Suscripcion>>(`/suscripciones/${id}`, {
+    estadoSuscripcion: 'PAUSADA',
+  });
+  return respuesta.data.data;
+}

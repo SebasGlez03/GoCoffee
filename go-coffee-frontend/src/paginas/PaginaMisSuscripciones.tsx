@@ -21,11 +21,18 @@ export function PaginaMisSuscripciones() {
     const {
         suscripciones, cargando, error, reintentar,
         cancelarSuscripcion, cancelandoId, errorCancelacion, mensajeCancelacion,
+        pausarSuscripcion, pausandoId,
     } = useMisSuscripciones();
 
     function confirmarCancelacion(id: number) {
         if (window.confirm(`¿Quieres cancelar la suscripción #${id}? Esta acción no se puede deshacer.`)) {
             void cancelarSuscripcion(id);
+        }
+    }
+
+    function confirmarPausa(id: number) {
+        if (window.confirm(`¿Quieres pausar la suscripción #${id}?`)) {
+            void pausarSuscripcion(id);
         }
     }
 
@@ -82,17 +89,30 @@ export function PaginaMisSuscripciones() {
                                         <dd>{suscripcion.ciclos.length}</dd>
                                     </div>
                                 </dl>
+                                <div className="gc-suscripcion__acciones">
+                                {suscripcion.estadoSuscripcion === 'ACTIVA' && (
+                                    <button
+                                        type="button"
+                                        className="gc-suscripcion__pausar"
+                                        disabled={cancelandoId !== null || pausandoId !== null}
+                                        onClick={() => confirmarPausa(suscripcion.id)}
+                                        aria-label={`Pausar suscripción #${suscripcion.id}`}
+                                    >
+                                        {pausandoId === suscripcion.id ? 'Pausando…' : 'Pausar suscripción'}
+                                    </button>
+                                )}
                                 {suscripcion.estadoSuscripcion !== 'CANCELADA' && (
                                     <button
                                         type="button"
                                         className="gc-suscripcion__cancelar"
-                                        disabled={cancelandoId !== null}
+                                        disabled={cancelandoId !== null || pausandoId !== null}
                                         onClick={() => confirmarCancelacion(suscripcion.id)}
                                         aria-label={`Cancelar suscripción #${suscripcion.id}`}
                                     >
                                         {cancelandoId === suscripcion.id ? 'Cancelando…' : 'Desuscribirme'}
                                     </button>
                                 )}
+                                </div>
                             </article>
                         ))}
                     </div>
