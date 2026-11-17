@@ -18,7 +18,16 @@ const formatoFecha = new Intl.DateTimeFormat('es-MX', {
 });
 
 export function PaginaMisSuscripciones() {
-    const { suscripciones, cargando, error, reintentar } = useMisSuscripciones();
+    const {
+        suscripciones, cargando, error, reintentar,
+        cancelarSuscripcion, cancelandoId, errorCancelacion, mensajeCancelacion,
+    } = useMisSuscripciones();
+
+    function confirmarCancelacion(id: number) {
+        if (window.confirm(`¿Quieres cancelar la suscripción #${id}? Esta acción no se puede deshacer.`)) {
+            void cancelarSuscripcion(id);
+        }
+    }
 
     return (
         <section className="gc-suscripciones" aria-labelledby="mis-suscripciones-titulo">
@@ -31,6 +40,8 @@ export function PaginaMisSuscripciones() {
 
             {cargando && <Cargando />}
             {!cargando && error && <MensajeError mensaje={error} onReintentar={reintentar} />}
+            {errorCancelacion && <p className="gc-suscripciones__aviso gc-suscripciones__aviso--error" role="alert">{errorCancelacion}</p>}
+            {mensajeCancelacion && <p className="gc-suscripciones__aviso" role="status">{mensajeCancelacion}</p>}
 
             {!cargando && !error && (
                 suscripciones.length === 0 ? (
@@ -71,6 +82,17 @@ export function PaginaMisSuscripciones() {
                                         <dd>{suscripcion.ciclos.length}</dd>
                                     </div>
                                 </dl>
+                                {suscripcion.estadoSuscripcion !== 'CANCELADA' && (
+                                    <button
+                                        type="button"
+                                        className="gc-suscripcion__cancelar"
+                                        disabled={cancelandoId !== null}
+                                        onClick={() => confirmarCancelacion(suscripcion.id)}
+                                        aria-label={`Cancelar suscripción #${suscripcion.id}`}
+                                    >
+                                        {cancelandoId === suscripcion.id ? 'Cancelando…' : 'Desuscribirme'}
+                                    </button>
+                                )}
                             </article>
                         ))}
                     </div>

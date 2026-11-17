@@ -137,3 +137,42 @@
     grid-template-columns: 1fr;
   }
 }
+.gc-suscripcion__cancelar {
+  margin-top: 1.5rem;
+  padding: 0.65rem 1rem;
+  border: 1px solid var(--status-danger-text);
+  border-radius: 0.6rem;
+  background: var(--color-white);
+  color: var(--status-danger-text);
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.gc-suscripcion__cancelar:hover:not(:disabled) {
+  background: var(--status-danger-bg);
+}
+
+.gc-suscripcion__cancelar:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
+
+.gc-suscripcion__cancelar:focus-visible {
+  outline: 3px solid var(--color-mocha);
+  outline-offset: 3px;
+}
+
+.gc-suscripciones__aviso {
+  padding: 1rem;
+  margin-bottom: 1.5rem;
+  border-radius: 0.6rem;
+  background: var(--status-success-bg);
+  color: var(--status-success-text);
+}
+
+.gc-suscripciones__aviso--error {
+  background: var(--status-danger-bg);
+  color: var(--status-danger-text);
+}
+

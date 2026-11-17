@@ -1,6 +1,6 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import type { Suscripcion } from '../tipos/tipos.ts';
-import { traerSuscripciones } from '../servicios/goCoffee.ts';
+import { desuscribirse, traerSuscripciones } from '../servicios/goCoffee.ts';
 import { mensajeDeError } from '../servicios/api.ts';
 
 export function useMisSuscripciones() {
@@ -8,6 +8,10 @@ export function useMisSuscripciones() {
     const [cargando, setCargando] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [intento, setIntento] = useState(0);
+    const [cancelandoId, setCancelandoId] = useState<number | null>(null);
+    const [errorCancelacion, setErrorCancelacion] = useState<string | null>(null);
+    const [mensajeCancelacion, setMensajeCancelacion] = useState<string | null>(null);
+    const cancelacionEnCurso = useRef(false);
 
     useEffect(() => {
         let vigente = true;
@@ -27,5 +31,26 @@ export function useMisSuscripciones() {
         setIntento((n) => n + 1);
     }
 
-    return { suscripciones, cargando, error, reintentar };
+    async function cancelarSuscripcion(id: number) {
+        if (cancelacionEnCurso.current) return;
+        cancelacionEnCurso.current = true;
+        setCancelandoId(id);
+        setErrorCancelacion(null);
+        setMensajeCancelacion(null);
+        try {
+            const actualizada = await desuscribirse(id);
+            setSuscripciones((lista) => lista.map((s) => s.id === id ? actualizada : s));
+            setMensajeCancelacion(`Se canceló la suscripción #${id}.`);
+        } catch (e) {
+            setErrorCancelacion(mensajeDeError(e, 'No se pudo cancelar la suscripción. Intenta de nuevo.'));
+        } finally {
+            cancelacionEnCurso.current = false;
+            setCancelandoId(null);
+        }
+    }
+
+    return {
+        suscripciones, cargando, error, reintentar,
+        cancelarSuscripcion, cancelandoId, errorCancelacion, mensajeCancelacion,
+    };
 }

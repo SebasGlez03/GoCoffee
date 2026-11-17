@@ -21,3 +21,10 @@ export async function traerSuscripciones(): Promise<Suscripcion[]> {
   const respuesta = await api.get<Sobre<Suscripcion[]>>('/suscripciones');
   return respuesta.data.data;
 }
+
+export async function desuscribirse(id: number): Promise<Suscripcion> {
+  const respuesta = await api.patch<Sobre<Suscripcion>>(`/suscripciones/${id}`, {
+    estadoSuscripcion: 'CANCELADA',
+  });
+  return respuesta.data.data;
+}
