@@ -25,11 +25,18 @@ export function PaginaDetalleSuscripcion() {
             </section>
         );
     }
-    return <DetalleSuscripcion id={idSuscripcion} />;
+    return <DetalleSuscripcion key={idSuscripcion} id={idSuscripcion} />;
 }
 
 function DetalleSuscripcion({ id }: { id: number }) {
-    const { suscripcion, cargando, error, reintentar } = useSuscripcion(id);
+    const { suscripcion, cargando, error, reintentar, ejecutarAccion, accion, errorAccion, mensaje } = useSuscripcion(id);
+
+    function confirmar(tipo: 'pausar' | 'cancelar' | 'reanudar') {
+        const aviso = tipo === 'cancelar' ? ' Esta acción no se puede deshacer.' : '';
+        if (window.confirm(`¿Quieres ${tipo} la suscripción #${id}?${aviso}`)) {
+            void ejecutarAccion(tipo);
+        }
+    }
     return (
         <section className="gc-detalle-suscripcion" aria-labelledby="detalle-suscripcion-titulo">
             <Link className="gc-detalle-suscripcion__volver" to="/suscripciones">← Volver a mis suscripciones</Link>
@@ -39,6 +46,8 @@ function DetalleSuscripcion({ id }: { id: number }) {
             </header>
             {cargando && <Cargando />}
             {error && <MensajeError mensaje={error} onReintentar={reintentar} />}
+            {errorAccion && <p className="gc-detalle-suscripcion__aviso gc-detalle-suscripcion__aviso--error" role="alert">{errorAccion}</p>}
+            {mensaje && <p className="gc-detalle-suscripcion__aviso" role="status">{mensaje}</p>}
             {suscripcion && (
                 <article className="gc-detalle-suscripcion__tarjeta">
                     <h2>Información de la suscripción</h2>
@@ -55,6 +64,23 @@ function DetalleSuscripcion({ id }: { id: number }) {
                             </dd>
                         </div>
                     </dl>
+                    <div className="gc-detalle-suscripcion__acciones">
+                        {suscripcion.estadoSuscripcion === 'ACTIVA' && (
+                            <button type="button" disabled={accion !== null} onClick={() => confirmar('pausar')}>
+                                {accion === 'pausar' ? 'Pausando…' : 'Pausar suscripción'}
+                            </button>
+                        )}
+                        {suscripcion.estadoSuscripcion === 'PAUSADA' && (
+                            <button type="button" disabled={accion !== null} onClick={() => confirmar('reanudar')}>
+                                {accion === 'reanudar' ? 'Reanudando…' : 'Reanudar suscripción'}
+                            </button>
+                        )}
+                        {suscripcion.estadoSuscripcion !== 'CANCELADA' && (
+                            <button type="button" className="gc-detalle-suscripcion__cancelar" disabled={accion !== null} onClick={() => confirmar('cancelar')}>
+                                {accion === 'cancelar' ? 'Cancelando…' : 'Desuscribirme'}
+                            </button>
+                        )}
+                    </div>
                 </article>
             )}
         </section>
