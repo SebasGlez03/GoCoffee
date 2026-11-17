@@ -1,1 +1,0 @@
-ALTER TABLE `ciclos` ADD COLUMN `entregaPausada` BOOLEAN NOT NULL DEFAULT false;
