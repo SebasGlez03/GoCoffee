@@ -1,6 +1,5 @@
-import { DireccionEntrega, Ciclo, Suscripcion } from "../../dominio/entidades";
-import { DiaSemana, EstadoSuscripcion } from "../../dominio/tipos";
-
+import { DireccionEntrega, Ciclo, Suscripcion } from '../../dominio/entidades';
+import { DiaSemana, EstadoSuscripcion } from '../../dominio/tipos';
 
 export interface SuscripcionResponseDto {
   id: number;
@@ -10,6 +9,7 @@ export interface SuscripcionResponseDto {
   fechaInicio: string;
   direccionEntrega: DireccionEntrega;
   estadoSuscripcion: EstadoSuscripcion;
+  motivoSuspension?: string | null;
   ciclos: Ciclo[];
   ultimaEntregaPagada: {
     idEntrega: number;
@@ -27,8 +27,19 @@ export interface SuscripcionResponseDto {
 */
 export function aSuscripcion(s: Suscripcion): SuscripcionResponseDto {
   const ultimaPagada = s.ciclos
-    .filter((c) => c.cobro?.estado === 'PAGADO' && c.entrega && c.entrega.estadoEntrega !== 'SALTADA')
-    .reduce<Ciclo | null>((ultima, c) => !ultima || c.entrega!.fechaProgramada > ultima.entrega!.fechaProgramada ? c : ultima, null);
+    .filter(
+      (c) =>
+        c.cobro?.estado === 'PAGADO' &&
+        c.entrega &&
+        c.entrega.estadoEntrega !== 'SALTADA',
+    )
+    .reduce<Ciclo | null>(
+      (ultima, c) =>
+        !ultima || c.entrega!.fechaProgramada > ultima.entrega!.fechaProgramada
+          ? c
+          : ultima,
+      null,
+    );
   return {
     id: s.idSuscripcion,
     usuarioId: s.usuarioId,
@@ -37,12 +48,15 @@ export function aSuscripcion(s: Suscripcion): SuscripcionResponseDto {
     fechaInicio: s.fechaInicio.toISOString(),
     direccionEntrega: s.direccionEntrega,
     estadoSuscripcion: s.estadoSuscripcion,
+    motivoSuspension: s.motivoSuspension ?? null,
     ciclos: s.ciclos,
-    ultimaEntregaPagada: ultimaPagada?.entrega ? {
-      idEntrega: ultimaPagada.entrega.idEntrega,
-      numCiclo: ultimaPagada.numCiclo,
-      fechaProgramada: ultimaPagada.entrega.fechaProgramada.toISOString(),
-      estadoEntrega: ultimaPagada.entrega.estadoEntrega,
-    } : null,
+    ultimaEntregaPagada: ultimaPagada?.entrega
+      ? {
+          idEntrega: ultimaPagada.entrega.idEntrega,
+          numCiclo: ultimaPagada.numCiclo,
+          fechaProgramada: ultimaPagada.entrega.fechaProgramada.toISOString(),
+          estadoEntrega: ultimaPagada.entrega.estadoEntrega,
+        }
+      : null,
   };
 }

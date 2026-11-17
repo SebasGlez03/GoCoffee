@@ -32,6 +32,7 @@ export interface Suscripcion {
   fechaInicio: Date;
   direccionEntrega: DireccionEntrega;
   estadoSuscripcion: EstadoSuscripcion;
+  motivoSuspension?: string | null;
   ciclos: Ciclo[];
 }
 

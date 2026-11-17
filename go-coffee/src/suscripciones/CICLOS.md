@@ -1,8 +1,8 @@
 # Programación de ciclos
 
 El repositorio Prisma crea la suscripción y su primer ciclo con entrega PROGRAMADA
-en la misma transacción. Los ciclos no se reciben del frontend. El cobro permanece
-sin asignar hasta implementar el flujo de pagos; generar un ciclo no cobra dinero.
+en la misma transacción. Los ciclos no se reciben del frontend. Generar un ciclo
+no cobra dinero.
 
 El servicio CiclosService revisa las suscripciones activas al iniciar el backend y
 cada minuto. Mantiene un ciclo futuro, avanzando 7, 15 o 31 días desde el anterior.
@@ -18,20 +18,39 @@ No se recuperan saltos voluntarios. Se conserva el historial.
 
 ## Integración de cancelación con cobros y entregas
 
-El módulo de cobros debe asociar su registro al ciclo mediante IdCobro y guardar
-estadoCobro=PAGADO cuando el pago sea exitoso. FALLIDO o ausencia de cobro no
-acreditan una entrega pagada. Al registrar pagos concurrentes, usar la misma
-transacción y bloqueo de suscripción que la cancelación, y verificar su estado
-antes de aceptar cobros nuevos.
+El modo de cobro actual es manual/demo y no procesa pagos. Un administrador
+registra el resultado confirmado fuera del sistema en `POST /cobros`; cada intento
+se conserva como fila ligada al ciclo. Un ciclo se considera pagado si existe al
+menos un intento PAGADO. Un intento FALLIDO suspende la suscripción y detiene la
+programación. Cuando todos los intentos fallidos pendientes se resuelven con un
+cobro exitoso, la suscripción se reactiva y sincroniza sus ciclos.
+
+El cliente puede consultar su historial en `GET /cobros/historial` y corregir los
+datos visibles de pago en `GET/PUT /cobros/metodo-pago`. Solo se guarda titular,
+marca y últimos cuatro dígitos; no se solicitan ni almacenan número completo,
+CVV o fecha de expiración. Estos metadatos no autorizan un cargo real.
+
+El registro de cobros y el salto de entrega bloquean la suscripción dentro de una
+transacción para evitar que ambas operaciones se acepten a la vez. No se puede
+cobrar un ciclo saltado, saltar un ciclo pagado ni cobrar dos veces un ciclo.
 
 La respuesta de suscripción incluye ultimaEntregaPagada (o null), con idEntrega,
 numCiclo, fechaProgramada ISO y estadoEntrega. Se calcula por la fecha de entrega
 más tardía entre las pagadas que no estén SALTADAS. El listado y el detalle muestran
 este dato después de cancelar y también al volver a consultar la suscripción.
 
-El módulo de entregas debe permitir completar las entregas pagadas ya existentes
-aunque la suscripción esté CANCELADA. No debe generar nuevos ciclos para ella.
-Este cambio no registra cobros, no simula pagos y no modifica el flujo de envío.
+La pantalla de entregas muestra los ciclos por mes y permite saltar una entrega
+PROGRAMADA no pagada con `POST /suscripciones/:id/ciclos/:numCiclo/saltar`.
+El endpoint valida la propiedad de la suscripción y conserva el ciclo como parte
+del historial.
+
+Los cambios de plan permiten seleccionar uno de los próximos doce ciclos. La
+solicitud queda pendiente de aprobación; el plan nuevo y su precio se aplican
+cuando el programador alcanza ese número de ciclo.
+
+El panel `GET /administracion/ciclos` permite filtrar el historial por fechas,
+suscripción, estado de entrega y estado de cobro. El panel también permite al
+administrador registrar el resultado manual de un cobro.
 
 Cambiar el día desplaza la próxima entrega PROGRAMADA al día elegido, nunca al
 pasado; las siguientes se calculan desde esa fecha. No modifica entregas ARMADAS,

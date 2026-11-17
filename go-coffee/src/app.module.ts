@@ -7,9 +7,16 @@ import { EntregasModule } from './entregas/entregas.module';
 import { AuthModule } from './auth/auth.module';
 import { APP_FILTER } from '@nestjs/core';
 import { FiltroErroresDominio } from './common/filtros/filtro-errores-dominio';
+import { PagosModule } from './pagos/pagos.module';
 
 @Module({
-  imports: [SuscripcionesModule, PlanesModule, EntregasModule, AuthModule],
+  imports: [
+    SuscripcionesModule,
+    PlanesModule,
+    EntregasModule,
+    AuthModule,
+    PagosModule,
+  ],
   controllers: [AppController],
   providers: [
     AppService,

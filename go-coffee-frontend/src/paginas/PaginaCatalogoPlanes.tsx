@@ -1,11 +1,11 @@
-import { useState } from "react";
-import type { Plan } from "../componentes/PlanCard";
-import { PlanCard } from "../componentes/PlanCard";
-import "../assets/css/PaginaCatalogoPlanes.css";
-import { Link } from "react-router";
-import { Cargando } from "../componentes/Cargando";
-import { MensajeError } from "../componentes/MensajeError";
-import { usePlanes } from "../hooks/UsePlanes";
+import { useState } from 'react';
+import type { Plan } from '../componentes/PlanCard';
+import { PlanCard } from '../componentes/PlanCard';
+import '../assets/css/PaginaCatalogoPlanes.css';
+import { Link } from 'react-router';
+import { Cargando } from '../componentes/Cargando';
+import { MensajeError } from '../componentes/MensajeError';
+import { usePlanes } from '../hooks/usePlanes';
 
 export function PaginaCatalogoPlanes() {
   const [planSeleccionado, setPlanSeleccionado] = useState<Plan | null>(null);
@@ -13,7 +13,7 @@ export function PaginaCatalogoPlanes() {
 
   const handleSeleccionarPlan = (plan: Plan) => {
     setPlanSeleccionado(plan);
-    console.log("Plan elegido para suscripción:", plan);
+    console.log('Plan elegido para suscripción:', plan);
   };
 
   return (
@@ -61,7 +61,11 @@ export function PaginaCatalogoPlanes() {
         {planes.length > 0 && (
           <div className="gc-catalogo-grid">
             {planes.map((plan) => (
-              <Link className="gc-link-router" key={plan.idPlan} to={`/planes/${plan.idPlan}`}>
+              <Link
+                className="gc-link-router"
+                key={plan.idPlan}
+                to={`/planes/${plan.idPlan}`}
+              >
                 <PlanCard
                   key={plan.idPlan}
                   plan={plan}
