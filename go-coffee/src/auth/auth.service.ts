@@ -1,38 +1,39 @@
 import {
   ConflictException,
+  Inject,
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcryptjs';
-import { PrismaService } from '../common/prisma/prisma.service';
+import type {
+  RespuestaLogin,
+  UsuarioPublico,
+} from '../contrato/contrato';
+import type { UsuariosRepository } from './dominio/usuarios.repository';
+import { USUARIOS_REPOSITORY } from './infra/usuarios.tokens';
 import { LoginDto } from './dto/login.dto';
 import { RegisterDto } from './dto/register.dto';
 
 @Injectable()
 export class AuthService {
   constructor(
-    private readonly prisma: PrismaService,
+    @Inject(USUARIOS_REPOSITORY)
+    private readonly usuarios: UsuariosRepository,
     private readonly jwtService: JwtService,
   ) {}
 
-  async register(dto: RegisterDto) {
-    const usuarioExistente = await this.prisma.client.usuario.findUnique({
-      where: { email: dto.email },
-    });
-
-    if (usuarioExistente) {
-      throw new ConflictException('El email ya está registrado');
+  async register(dto: RegisterDto): Promise<UsuarioPublico> {
+    const email = dto.email.trim().toLowerCase();
+    if (await this.usuarios.buscarPorEmail(email)) {
+      throw new ConflictException('Ese correo ya tiene una cuenta.');
     }
 
-    const passwordHash = await bcrypt.hash(dto.password, 10);
-
-    const usuario = await this.prisma.client.usuario.create({
-      data: {
-        email: dto.email,
-        passwordHash,
-        rol: dto.rol ?? 'CLIENTE',
-      },
+    const usuario = await this.usuarios.crear({
+      email,
+      passwordHash: await bcrypt.hash(dto.password, 10),
+      // El registro público siempre crea clientes.
+      rol: 'CLIENTE',
     });
 
     return {
@@ -42,38 +43,35 @@ export class AuthService {
     };
   }
 
-  async login(dto: LoginDto) {
-    const usuario = await this.prisma.client.usuario.findUnique({
-      where: { email: dto.email },
-    });
+  async login(dto: LoginDto): Promise<RespuestaLogin> {
+    const usuario = await this.usuarios.buscarPorEmail(
+      dto.email.trim().toLowerCase(),
+    );
+    const passwordValida =
+      usuario !== null &&
+      (await bcrypt.compare(dto.password, usuario.passwordHash));
 
-    if (!usuario) {
-      throw new UnauthorizedException('Credenciales inválidas');
+    if (!usuario || !passwordValida) {
+      throw new UnauthorizedException('Correo o contraseña incorrectos.');
     }
 
-    const passwordValida = await bcrypt.compare(dto.password, usuario.passwordHash);
-
-    if (!passwordValida) {
-      throw new UnauthorizedException('Credenciales inválidas');
-    }
-
-    const payload = {
-      sub: usuario.idUsuario,
+    const user: UsuarioPublico = {
+      idUsuario: usuario.idUsuario,
       email: usuario.email,
       rol: usuario.rol,
     };
 
     return {
-      access_token: this.jwtService.sign(payload),
-      user: {
-        idUsuario: usuario.idUsuario,
+      access_token: this.jwtService.sign({
+        sub: usuario.idUsuario,
         email: usuario.email,
         rol: usuario.rol,
-      },
+      }),
+      user,
     };
   }
 
-  async me(user: any) {
+  me(user: UsuarioPublico): UsuarioPublico {
     return {
       idUsuario: user.idUsuario,
       email: user.email,

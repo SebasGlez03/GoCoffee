@@ -1,22 +1,20 @@
-import {
-  ExecutionContext,
-  Injectable,
-  UnauthorizedException,
-} from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
-import { Observable } from 'rxjs';
+import type { UsuarioPublico } from '../../contrato/contrato';
 
+/**
+ * Exige un token válido. Si falta o ya venció responde 401; el portal
+ * usa ese 401 para cerrar la sesión y avisar al usuario.
+ */
 @Injectable()
 export class JwtAuthGuard extends AuthGuard('jwt') {
-  canActivate(
-    context: ExecutionContext,
-  ): boolean | Promise<boolean> | Observable<boolean> {
-    return super.canActivate(context);
-  }
-
-  handleRequest(err: any, user: any, info: any) {
+  handleRequest<T = UsuarioPublico>(err: unknown, user: T | false | null): T {
     if (err || !user) {
-      throw err || new UnauthorizedException('Token inválido o requerido');
+      throw err instanceof Error
+        ? err
+        : new UnauthorizedException(
+            'Tu sesión no es válida o ya venció. Vuelve a iniciar sesión.',
+          );
     }
     return user;
   }

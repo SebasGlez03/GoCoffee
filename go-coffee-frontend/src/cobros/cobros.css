@@ -1,0 +1,18 @@
+.gc-cobros {
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
+  gap: 1.25rem;
+  align-items: start;
+}
+
+.gc-metodo-actual {
+  padding: 0.85rem 1rem;
+  border-radius: var(--radius-md);
+  background: var(--color-latte);
+}
+
+@media (max-width: 900px) {
+  .gc-cobros {
+    grid-template-columns: 1fr;
+  }
+}

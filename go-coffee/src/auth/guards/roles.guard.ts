@@ -5,6 +5,7 @@ import {
   Injectable,
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
+import type { UsuarioPublico } from '../../contrato/contrato';
 import { ROLES_KEY } from '../decorators/roles.decorator';
 
 @Injectable()
@@ -21,16 +22,11 @@ export class RolesGuard implements CanActivate {
       return true;
     }
 
-    const { user } = context.switchToHttp().getRequest();
-    if (!user || !user.rol) {
-      throw new ForbiddenException('No tienes permisos para esta acción');
-    }
-
-    const hasRole = requiredRoles.includes(user.rol);
-    if (!hasRole) {
-      throw new ForbiddenException(
-        'No tienes permisos suficientes para esta acción',
-      );
+    const { user } = context
+      .switchToHttp()
+      .getRequest<{ user?: UsuarioPublico }>();
+    if (!user?.rol || !requiredRoles.includes(user.rol)) {
+      throw new ForbiddenException('No tienes permiso para esta acción.');
     }
 
     return true;

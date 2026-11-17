@@ -2,15 +2,8 @@
 @contentType = application/json
 @token =
 
-### 1) Registro admin
-POST {{baseUrl}}/auth/register
-Content-Type: {{contentType}}
-
-{
-  "email": "admin@go-coffee.com",
-  "password": "123456",
-  "rol": "ADMINISTRADOR"
-}
+### 1) El administrador NO se registra por la API: lo crea el seed
+###    (npx tsx src/datos/seed.ts -> admin@go-coffee.com / 123456)
 
 ### 2) Login admin
 POST {{baseUrl}}/auth/login
@@ -25,14 +18,13 @@ Content-Type: {{contentType}}
 GET {{baseUrl}}/auth/me
 Authorization: Bearer {{token}}
 
-### 4) Registro cliente
+### 4) Registro (siempre crea un CLIENTE; mandar "rol" responde 400)
 POST {{baseUrl}}/auth/register
 Content-Type: {{contentType}}
 
 {
   "email": "cliente@go-coffee.com",
-  "password": "123456",
-  "rol": "CLIENTE"
+  "password": "123456"
 }
 
 ### 5) Login cliente
@@ -71,15 +63,14 @@ Authorization: Bearer {{token}}
 {
   "planId": 1,
   "diaSemanaEntrega": "LUNES",
-  "fechaInicio": "2026-11-05",
+  "fechaInicio": "2027-01-04T00:00:00.000Z",
   "direccionEntrega": {
     "calle": "Av. Principal",
     "codigoPostal": "12345",
     "numeroCasa": "100",
     "estado": "CDMX"
   },
-  "estadoSuscripcion": "ACTIVA",
-  "ciclos": []
+  "estadoSuscripcion": "ACTIVA"
 }
 
 ### 10) Obtener suscripción por ID
@@ -100,3 +91,6 @@ Authorization: Bearer {{token}}
 
 ### Ejemplos de valores válidos para diaSemanaEntrega:
 # LUNES | MARTES | MIERCOLES | JUEVES | VIERNES | SABADO | DOMINGO
+
+### 12) Documentación interactiva (Swagger): abrir en el navegador
+# http://localhost:3000/docs

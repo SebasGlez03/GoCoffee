@@ -1,31 +1,31 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
-import { PrismaService } from '../../common/prisma/prisma.service';
+import { obtenerSecretoJwt } from '../../config/jwt.config';
+import type { UsuarioPublico } from '../../contrato/contrato';
+import type { UsuariosRepository } from '../dominio/usuarios.repository';
+import { USUARIOS_REPOSITORY } from '../infra/usuarios.tokens';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
-  constructor(private readonly prisma: PrismaService) {
+  constructor(
+    @Inject(USUARIOS_REPOSITORY)
+    private readonly usuarios: UsuariosRepository,
+  ) {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       ignoreExpiration: false,
-      secretOrKey: process.env.JWT_SECRET ?? 'dev-secret',
+      secretOrKey: obtenerSecretoJwt(),
     });
   }
 
-  async validate(payload: any) {
-    const user = await this.prisma.client.usuario.findUnique({
-      where: { email: payload.email },
-    });
-
-    if (!user) {
-      return null;
-    }
-
+  async validate(payload: { email: string }): Promise<UsuarioPublico | null> {
+    const usuario = await this.usuarios.buscarPorEmail(payload.email);
+    if (!usuario) return null;
     return {
-      idUsuario: user.idUsuario,
-      email: user.email,
-      rol: user.rol,
+      idUsuario: usuario.idUsuario,
+      email: usuario.email,
+      rol: usuario.rol,
     };
   }
 }

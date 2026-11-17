@@ -1,5 +1,12 @@
 node_modules
+dist
 # Keep environment variables out of version control
 .env
 
 /generated/prisma
+
+# Carpetas de herramientas de IA / editores (no son parte del proyecto)
+.claude/
+.windsurf/
+.agents/
+skills-lock.json

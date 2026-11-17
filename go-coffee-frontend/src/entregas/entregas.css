@@ -1,0 +1,23 @@
+.gc-pestanas {
+  display: inline-flex;
+  gap: 0.25rem;
+  padding: 0.25rem;
+  margin-bottom: 1.25rem;
+  background: var(--color-latte);
+  border-radius: 999px;
+}
+
+.gc-pestanas__boton {
+  padding: 0.45rem 1.1rem;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--color-mocha);
+  font-weight: 600;
+}
+
+.gc-pestanas__boton[aria-selected='true'] {
+  background: var(--color-white);
+  color: var(--color-espresso);
+  box-shadow: var(--shadow-sm);
+}

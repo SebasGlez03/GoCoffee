@@ -1,54 +1,28 @@
 import {
-  IsString,
-  IsNotEmpty,
-  IsEnum,
+  ArrayMaxSize,
+  IsArray,
   IsDateString,
+  IsEnum,
   IsInt,
+  IsOptional,
   Min,
   ValidateNested,
-  IsArray,
-  IsNumber,
-  IsOptional,
 } from 'class-validator';
 import { Type } from 'class-transformer';
-import {
-  DIAS_SEMANA,
-  ESTADOS_SUSCRIPCION,
-} from '../../dominio/tipos';
+import { DIAS_SEMANA, ESTADOS_SUSCRIPCION } from '../../dominio/tipos';
 import type { DiaSemana, EstadoSuscripcion } from '../../dominio/tipos';
+import type { CrearSuscripcionCuerpo } from '../../contrato/contrato';
+import { DireccionEntregaDto } from './direccion-entrega.dto';
 
-class DireccionEntregaDto {
-  @IsOptional()
-  @IsInt()
-  @Min(1)
-  idDireccionEntrega?: number;
-
-  @IsString()
-  @IsNotEmpty()
-  calle!: string;
-
-  @IsString()
-  @IsNotEmpty()
-  codigoPostal!: string;
-
-  @IsString()
-  @IsNotEmpty()
-  numeroCasa!: string;
-
-  @IsString()
-  @IsNotEmpty()
-  estado!: string;
-}
-
-export class CrearSuscripcionDto {
+export class CrearSuscripcionDto implements CrearSuscripcionCuerpo {
   @IsInt()
   @Min(1)
   planId!: number;
 
-  @IsEnum(DIAS_SEMANA)
+  @IsEnum(DIAS_SEMANA, { message: 'Elige un día de entrega válido.' })
   diaSemanaEntrega!: DiaSemana;
 
-  @IsDateString()
+  @IsDateString({}, { message: 'La fecha de inicio no es válida.' })
   fechaInicio!: string;
 
   @ValidateNested()
@@ -58,8 +32,14 @@ export class CrearSuscripcionDto {
   @IsEnum(ESTADOS_SUSCRIPCION)
   estadoSuscripcion!: EstadoSuscripcion;
 
-  // Compatibilidad con clientes anteriores; el backend genera los ciclos.
+  /**
+   * Los ciclos los genera el servidor. Se acepta el campo solo vacío
+   * para no romper clientes anteriores que mandaban "ciclos": [].
+   */
   @IsOptional()
   @IsArray()
-  ciclos?: any[];
+  @ArrayMaxSize(0, {
+    message: 'Los ciclos los genera el servidor; no los envíes.',
+  })
+  ciclos?: never[];
 }

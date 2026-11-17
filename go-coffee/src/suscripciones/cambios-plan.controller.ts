@@ -9,22 +9,20 @@ import {
   Req,
   UseGuards,
 } from '@nestjs/common';
-import { IsBoolean, IsInt, IsNumber, Min } from 'class-validator';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { ResolverCambioDto, SolicitarCambioDto } from './dto/cambio-plan.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
 import type { UsuarioSesion } from './suscripciones.service';
 import { CambiosPlanService } from './cambios-plan.service';
+import type {
+  OpcionesCambioPlanRespuesta,
+  SolicitudCambioPlanRespuesta,
+} from '../contrato/contrato';
 
-class SolicitarCambioDto {
-  @IsInt() @Min(1) planId!: number;
-  @IsNumber() @Min(0) precioEsperado!: number;
-  @IsInt() @Min(1) numCicloAplicacion!: number;
-}
-class ResolverCambioDto {
-  @IsBoolean() aceptar!: boolean;
-}
-
+@ApiTags('Cambios de plan')
+@ApiBearerAuth()
 @Controller()
 @UseGuards(JwtAuthGuard, RolesGuard)
 export class CambiosPlanController {
@@ -35,7 +33,7 @@ export class CambiosPlanController {
     @Param('id', ParseIntPipe) id: number,
     @Req() req: { user: UsuarioSesion },
   ) {
-    return this.servicio.opciones(id, req.user);
+    return this.servicio.opciones(id, req.user) as Promise<OpcionesCambioPlanRespuesta>;
   }
   @Get('suscripciones/:id/cambios-plan')
   @Roles('CLIENTE', 'ADMINISTRADOR')
@@ -43,7 +41,7 @@ export class CambiosPlanController {
     @Param('id', ParseIntPipe) id: number,
     @Req() req: { user: UsuarioSesion },
   ) {
-    return this.servicio.historial(id, req.user);
+    return this.servicio.historial(id, req.user) as Promise<SolicitudCambioPlanRespuesta[]>;
   }
   @Post('suscripciones/:id/cambios-plan')
   @Roles('CLIENTE', 'ADMINISTRADOR')
@@ -58,12 +56,12 @@ export class CambiosPlanController {
       dto.precioEsperado,
       dto.numCicloAplicacion,
       req.user,
-    );
+    ) as Promise<SolicitudCambioPlanRespuesta>;
   }
   @Get('cambios-plan')
   @Roles('ADMINISTRADOR')
   listar() {
-    return this.servicio.listar();
+    return this.servicio.listar() as Promise<SolicitudCambioPlanRespuesta[]>;
   }
   @Patch('cambios-plan/:id/resolucion')
   @Roles('ADMINISTRADOR')
@@ -71,6 +69,6 @@ export class CambiosPlanController {
     @Param('id', ParseIntPipe) id: number,
     @Body() dto: ResolverCambioDto,
   ) {
-    return this.servicio.resolver(id, dto.aceptar);
+    return this.servicio.resolver(id, dto.aceptar) as Promise<SolicitudCambioPlanRespuesta>;
   }
 }

@@ -20,7 +20,12 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "erasableSyntaxOnly": true,
-    "noFallthroughCasesInSwitch": true
+    "noFallthroughCasesInSwitch": true,
+
+    /* Contrato compartido con el servicio (go-coffee/src/contrato) */
+    "paths": {
+      "@contrato": ["../go-coffee/src/contrato/contrato.ts"]
+    }
   },
   "include": ["src"]
 }

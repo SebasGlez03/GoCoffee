@@ -1,0 +1,40 @@
+.gc-suscripcion {
+  display: grid;
+  gap: 1rem;
+  align-content: start;
+}
+
+.gc-suscripcion__encabezado {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding-bottom: 0.9rem;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.gc-suscripcion__encabezado h2 {
+  font-size: 1.2rem;
+  color: var(--color-espresso);
+}
+
+.gc-suscripcion__plan {
+  color: var(--color-mocha);
+}
+
+.gc-detalle-suscripcion {
+  display: grid;
+  grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
+  gap: 1.25rem;
+  align-items: start;
+}
+
+.gc-detalle-suscripcion--una-columna {
+  grid-template-columns: 1fr;
+}
+
+@media (max-width: 860px) {
+  .gc-detalle-suscripcion {
+    grid-template-columns: 1fr;
+  }
+}

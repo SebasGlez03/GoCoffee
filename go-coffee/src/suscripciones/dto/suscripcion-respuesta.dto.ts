@@ -1,23 +1,12 @@
-import { DireccionEntrega, Ciclo, Suscripcion } from '../../dominio/entidades';
-import { DiaSemana, EstadoSuscripcion } from '../../dominio/tipos';
+import type { Ciclo, Suscripcion } from '../../dominio/entidades';
+import type { SuscripcionRespuesta } from '../../contrato/contrato';
 
-export interface SuscripcionResponseDto {
-  id: number;
-  usuarioId: number | null;
-  plan: NonNullable<Suscripcion['plan']> | null;
-  diaSemanaEntrega: DiaSemana;
-  fechaInicio: string;
-  direccionEntrega: DireccionEntrega;
-  estadoSuscripcion: EstadoSuscripcion;
-  motivoSuspension?: string | null;
-  ciclos: Ciclo[];
-  ultimaEntregaPagada: {
-    idEntrega: number;
-    numCiclo: number;
-    fechaProgramada: string;
-    estadoEntrega: NonNullable<Ciclo['entrega']>['estadoEntrega'];
-  } | null;
-}
+/**
+ * La respuesta de una suscripción está declarada en el contrato compartido
+ * (src/contrato/contrato.ts), que también usa el portal del cliente.
+ */
+export type SuscripcionResponseDto = SuscripcionRespuesta;
+
 
 /*
     El profe puso esta explicacion y la voy a poner para no perderme tampoco.

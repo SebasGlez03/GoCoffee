@@ -12,6 +12,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import type { Request, Response } from 'express';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { CrearSuscripcionDto } from './dto/crear-suscripcion.dto';
 import { ModificarSuscripcionDto } from './dto/modificar-suscripcion.dto';
 import type { UsuarioSesion } from './suscripciones.service';
@@ -26,10 +27,17 @@ import { Roles } from '../auth/decorators/roles.decorator';
 
 type PeticionAutenticada = Request & { user: UsuarioSesion };
 
+/**
+ * Un CLIENTE solo ve y modifica sus propias suscripciones (403 si no es
+ * suyo); el ADMINISTRADOR ve todas.
+ */
+@ApiTags('Suscripciones')
+@ApiBearerAuth()
 @Controller('suscripciones')
 export class SuscripcionesController {
   constructor(private readonly servicio: SuscripcionesService) {}
 
+  /** 200 · 401 · 403 no es tuya · 404 no existe. */
   @Get(':id')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('CLIENTE', 'ADMINISTRADOR')
@@ -41,6 +49,7 @@ export class SuscripcionesController {
     return aSuscripcion(suscripcion);
   }
 
+  /** 200 (lista vacía si no tiene) · 401. */
   @Get()
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('CLIENTE', 'ADMINISTRADOR')
@@ -49,6 +58,7 @@ export class SuscripcionesController {
     return lista.map(aSuscripcion);
   }
 
+  /** 201 · 400 datos inválidos · 401 · 409 duplicada o fecha pasada. */
   @Post()
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('CLIENTE', 'ADMINISTRADOR')
@@ -63,6 +73,7 @@ export class SuscripcionesController {
     return aSuscripcion(suscripcion);
   }
 
+  /** Pausar, reanudar, cancelar o cambiar día. 200 · 400 · 401 · 403 · 404 · 409 cancelada/suspendida. */
   @Patch(':id')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('CLIENTE', 'ADMINISTRADOR')
@@ -71,10 +82,16 @@ export class SuscripcionesController {
     @Body() dto: ModificarSuscripcionDto,
     @Req() req: PeticionAutenticada,
   ) {
-    const { fechaInicio, ...resto } = dto;
+    const { fechaInicio, direccionEntrega, ...resto } = dto;
     const modificacion: ModificacionSuscripcion = {
       ...resto,
       ...(fechaInicio != undefined && { fechaInicio: new Date(fechaInicio) }),
+      ...(direccionEntrega != undefined && {
+        direccionEntrega: {
+          ...direccionEntrega,
+          idDireccionEntrega: direccionEntrega.idDireccionEntrega ?? 0,
+        },
+      }),
     };
     const suscripcion = await this.servicio.update(id, modificacion, req.user);
     return aSuscripcion(suscripcion);

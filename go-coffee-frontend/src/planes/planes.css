@@ -1,0 +1,159 @@
+.gc-hero {
+  display: grid;
+  justify-items: center;
+  gap: 0.75rem;
+  padding: 2.5rem 1rem 1rem;
+  text-align: center;
+}
+
+.gc-hero h1 {
+  max-width: 20ch;
+  font-size: clamp(1.9rem, 5.5vw, 3rem);
+}
+
+.gc-hero p {
+  max-width: 60ch;
+  color: var(--color-mocha);
+  font-size: 1.05rem;
+}
+
+.gc-planes {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 270px), 1fr));
+  gap: 1.25rem;
+}
+
+.gc-plan {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  padding: 1.75rem;
+  background: var(--color-white);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.gc-plan:hover {
+  transform: translateY(-3px);
+  border-color: var(--color-caramel);
+  box-shadow: var(--shadow-md);
+}
+
+.gc-plan__encabezado {
+  display: grid;
+  gap: 0.4rem;
+  padding-bottom: 1.15rem;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.gc-plan__frecuencia {
+  justify-self: start;
+  padding: 0.15rem 0.6rem;
+  border-radius: 999px;
+  background: var(--color-latte);
+  color: var(--color-mocha);
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.gc-plan__nombre {
+  font-size: 1.35rem;
+}
+
+.gc-plan__precio strong {
+  font-size: 2rem;
+  color: var(--color-espresso);
+}
+
+.gc-plan__precio span {
+  color: var(--color-mocha);
+  font-size: 0.9rem;
+}
+
+.gc-plan__caracteristicas {
+  flex: 1;
+  display: grid;
+  gap: 0.7rem;
+  align-content: start;
+}
+
+.gc-plan__caracteristicas li {
+  display: flex;
+  gap: 0.6rem;
+}
+
+.gc-pasos__lista {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr));
+  gap: 1rem;
+}
+
+.gc-pasos__lista li {
+  display: grid;
+  gap: 0.4rem;
+}
+
+.gc-pasos__lista p {
+  color: var(--color-mocha);
+}
+
+.gc-pasos__icono {
+  font-size: 1.75rem;
+}
+
+.gc-detalle-plan {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr);
+  gap: 1.5rem;
+  align-items: start;
+}
+
+.gc-detalle-plan__info {
+  display: grid;
+  gap: 1rem;
+}
+
+.gc-detalle-plan__info h1 {
+  font-size: clamp(1.7rem, 4vw, 2.2rem);
+}
+
+.gc-detalle-plan__precio strong {
+  font-size: 2rem;
+  color: var(--color-espresso);
+}
+
+.gc-detalle-plan__info .gc-datos {
+  padding-top: 1rem;
+  border-top: 1px solid var(--color-border);
+}
+
+.gc-detalle-plan__formulario {
+  display: grid;
+  gap: 1.15rem;
+}
+
+.gc-confirmacion {
+  display: grid;
+  justify-items: center;
+  gap: 0.9rem;
+  text-align: center;
+}
+
+.gc-confirmacion__icono {
+  font-size: 2.75rem;
+}
+
+.gc-confirmacion__direccion {
+  font-style: normal;
+  color: var(--color-mocha);
+}
+
+@media (max-width: 860px) {
+  .gc-detalle-plan {
+    grid-template-columns: 1fr;
+  }
+}

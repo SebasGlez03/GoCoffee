@@ -1,0 +1,42 @@
+.gc-cambio-plan__subtitulo {
+  margin: 1.5rem 0 0.75rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--color-border);
+  font-size: 1.05rem;
+}
+
+.gc-historial {
+  list-style: none;
+  display: grid;
+  gap: 0.75rem;
+}
+
+.gc-historial__elemento {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 1rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-crema);
+}
+
+.gc-historial__principal {
+  display: grid;
+  gap: 0.25rem;
+  min-width: 0;
+  flex: 1 1 18rem;
+}
+
+.gc-historial__titulo {
+  color: var(--color-espresso);
+}
+
+.gc-historial__lateral {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+}

@@ -1,13 +1,14 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
+import { APP_FILTER } from '@nestjs/core';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { SuscripcionesModule } from './suscripciones/suscripciones.module';
-import { PlanesModule } from './planes/planes.module';
-import { EntregasModule } from './entregas/entregas.module';
 import { AuthModule } from './auth/auth.module';
-import { APP_FILTER } from '@nestjs/core';
-import { FiltroErroresDominio } from './common/filtros/filtro-errores-dominio';
+import { FiltroErrores } from './common/filtros/filtro-errores';
+import { RegistroPeticionesMiddleware } from './common/middleware/registro-peticiones.middleware';
+import { EntregasModule } from './entregas/entregas.module';
 import { PagosModule } from './pagos/pagos.module';
+import { PlanesModule } from './planes/planes.module';
+import { SuscripcionesModule } from './suscripciones/suscripciones.module';
 
 @Module({
   imports: [
@@ -18,9 +19,10 @@ import { PagosModule } from './pagos/pagos.module';
     PagosModule,
   ],
   controllers: [AppController],
-  providers: [
-    AppService,
-    { provide: APP_FILTER, useClass: FiltroErroresDominio },
-  ],
+  providers: [AppService, { provide: APP_FILTER, useClass: FiltroErrores }],
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(RegistroPeticionesMiddleware).forRoutes('*path');
+  }
+}

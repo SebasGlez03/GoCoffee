@@ -13,9 +13,9 @@ import {
   PlanNoEncontradoError,
   PrecioInvalidoError,
 } from '../dominio/errores';
-import { CrearPlanDTO } from './dto/crearPlanDto';
-import { PlanMapper } from './mapper/PlanMapper';
-import { ModificarPlanDTO } from './dto/modificarPlanDTO';
+import { CrearPlanDto } from './dto/crear-plan.dto';
+import { PlanMapper } from './mapper/plan.mapper';
+import { ModificarPlanDto } from './dto/modificar-plan.dto';
 import { EstadoPlan } from '../dominio/tipos';
 
 @Injectable()
@@ -41,7 +41,7 @@ export class PlanesService {
     return this.repo.findAll();
   }
 
-  async guardarNuevoPlan(dto: CrearPlanDTO): Promise<Plan> {
+  async guardarNuevoPlan(dto: CrearPlanDto): Promise<Plan> {
     if (!dto) {
       throw new PlanDatosRequeridosError();
     }
@@ -66,7 +66,7 @@ export class PlanesService {
     return await this.repo.save(nuevoPlan);
   }
 
-  async modificarNuevoPlan(dto: ModificarPlanDTO): Promise<Plan> {
+  async modificarNuevoPlan(dto: ModificarPlanDto): Promise<Plan> {
     if (!dto) {
       throw new PlanDatosRequeridosError();
     }
