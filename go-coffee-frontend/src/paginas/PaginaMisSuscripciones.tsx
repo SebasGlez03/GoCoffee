@@ -1,5 +1,7 @@
 import { Link } from 'react-router';
 import { Cargando } from '../componentes/Cargando';
+import { DatosPlanSuscripcion } from '../componentes/DatosPlanSuscripcion';
+import { ResumenCancelacion } from '../componentes/ResumenCancelacion';
 import { MensajeError } from '../componentes/MensajeError';
 import { useMisSuscripciones } from '../hooks/UseMisSuscripciones';
 import '../assets/css/PaginaMisSuscripciones.css';
@@ -27,7 +29,7 @@ export function PaginaMisSuscripciones() {
     const procesando = cancelandoId !== null || pausandoId !== null || reanudandoId !== null;
 
     function confirmarCancelacion(id: number) {
-        if (window.confirm(`¿Quieres cancelar la suscripción #${id}? Esta acción no se puede deshacer.`)) {
+        if (window.confirm(`¿Quieres cancelar la suscripción #${id}? Se respetarán las entregas ya pagadas. Esta acción no se puede deshacer.`)) {
             void cancelarSuscripcion(id);
         }
     }
@@ -75,6 +77,7 @@ export function PaginaMisSuscripciones() {
                                         {estados[suscripcion.estadoSuscripcion]}
                                     </span>
                                 </header>
+                                <DatosPlanSuscripcion plan={suscripcion.plan} />
                                 <dl className="gc-suscripcion__datos">
                                     <div>
                                         <dt>Fecha de inicio</dt>
@@ -97,6 +100,7 @@ export function PaginaMisSuscripciones() {
                                         <dd>{suscripcion.ciclos.length}</dd>
                                     </div>
                                 </dl>
+                                <ResumenCancelacion suscripcion={suscripcion} />
                                 <div className="gc-suscripcion__acciones">
                                 <Link className="gc-suscripcion__detalle" to={`/suscripciones/${suscripcion.id}`}>
                                     Ver detalle

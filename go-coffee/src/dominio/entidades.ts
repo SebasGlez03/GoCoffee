@@ -21,6 +21,13 @@ export interface Suscripcion {
   idSuscripcion: number;
   usuarioId: number | null;
   planId: number;
+  plan?: {
+    idPlan: number;
+    nombre: string;
+    cantidadBolsas: number;
+    precio: number;
+    frecuenciaEntrega: FrecuenciaEntrega;
+  };
   diaSemanaEntrega: DiaSemana;
   fechaInicio: Date;
   direccionEntrega: DireccionEntrega;

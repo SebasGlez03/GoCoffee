@@ -39,15 +39,26 @@ export class CiclosService implements OnModuleInit, OnModuleDestroy {
   // Se ejecuta dentro de una transacción con la suscripción bloqueada.
   async sincronizar(tx: Prisma.TransactionClient, id: number, cambioDia = false, reanudando = false) {
     const s = await tx.suscripcion.findUniqueOrThrow({
-      where: { idSuscripcion: id }, include: { plan: true, ciclos: { include: { entrega: true }, orderBy: { numCiclo: 'asc' } } },
+      where: { idSuscripcion: id }, include: { plan: true, ciclos: { include: { entrega: true, cobro: true }, orderBy: { numCiclo: 'asc' } } },
     });
     const ahora = new Date();
     const frecuencia = s.plan.frecuenciaEntrega as FrecuenciaEntrega;
     if (s.estadoSuscripcion === 'CANCELADA') {
-      await tx.entrega.updateMany({
-        where: { estadoEntrega: 'PROGRAMADA', ciclo: { some: { suscripcionId: id } } },
-        data: { estadoEntrega: 'SALTADA' },
-      });
+      for (const c of s.ciclos) {
+        if (!c.entrega) continue;
+        const pagada = c.cobro?.estadoCobro === 'PAGADO';
+        // Conserva todas las pagadas; la última se informa en la respuesta.
+        // Una entrega saltada voluntariamente no se reactiva.
+        if (pagada && c.entregaPausada && c.entrega.estadoEntrega === 'SALTADA') {
+          await tx.ciclo.update({ where: { idCiclo: c.idCiclo }, data: {
+            entregaPausada: false, entrega: { update: { estadoEntrega: 'PROGRAMADA' } },
+          } });
+        } else if (!pagada && c.entrega.estadoEntrega === 'PROGRAMADA') {
+          await tx.ciclo.update({ where: { idCiclo: c.idCiclo }, data: {
+            entregaPausada: false, entrega: { update: { estadoEntrega: 'SALTADA' } },
+          } });
+        }
+      }
       return;
     }
     if (s.estadoSuscripcion === 'PAUSADA') {

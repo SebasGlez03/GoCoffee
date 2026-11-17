@@ -14,7 +14,7 @@ export class SuscripcionPrismaRepository implements SuscripcionRepository {
   async findByUsuarioYPlan(usuarioId: number, planId: number): Promise<Suscripcion | null> {
     const item = await this.prisma.client.suscripcion.findFirst({
       where: { usuarioId, planId, estadoSuscripcion: { not: 'CANCELADA' } },
-      include: { direccionEntrega: true, ciclos: { include: { entrega: true, cobro: true } } },
+      include: { plan: true, direccionEntrega: true, ciclos: { include: { entrega: true, cobro: true } } },
     });
     return item ? this.toDomain(item) : null;
   }
@@ -90,7 +90,7 @@ export class SuscripcionPrismaRepository implements SuscripcionRepository {
       await this.ciclosServicio.sincronizar(tx, nueva.idSuscripcion);
       return tx.suscripcion.findUniqueOrThrow({
         where: { idSuscripcion: nueva.idSuscripcion },
-        include: { direccionEntrega: true, ciclos: { include: { entrega: true, cobro: true }, orderBy: { numCiclo: 'asc' } } },
+        include: { plan: true, direccionEntrega: true, ciclos: { include: { entrega: true, cobro: true }, orderBy: { numCiclo: 'asc' } } },
       });
     });
 
@@ -143,7 +143,7 @@ export class SuscripcionPrismaRepository implements SuscripcionRepository {
         anterior.estadoSuscripcion !== 'ACTIVA' && entidad.estadoSuscripcion === 'ACTIVA');
       return tx.suscripcion.findUniqueOrThrow({
         where: { idSuscripcion: entidad.idSuscripcion },
-        include: { direccionEntrega: true, ciclos: { include: { entrega: true, cobro: true }, orderBy: { numCiclo: 'asc' } } },
+        include: { plan: true, direccionEntrega: true, ciclos: { include: { entrega: true, cobro: true }, orderBy: { numCiclo: 'asc' } } },
       });
     });
     return this.toDomain(updated);
@@ -166,6 +166,13 @@ export class SuscripcionPrismaRepository implements SuscripcionRepository {
       idSuscripcion: item.idSuscripcion,
       usuarioId: item.usuarioId ?? null,
       planId: item.planId,
+      plan: item.plan ? {
+        idPlan: item.plan.planId,
+        nombre: item.plan.nombre,
+        cantidadBolsas: item.plan.cantidadBolsas,
+        precio: item.plan.precio,
+        frecuenciaEntrega: item.plan.frecuenciaEntrega,
+      } : undefined,
       diaSemanaEntrega: item.diaSemana,
       fechaInicio: item.fechaInicio,
       direccionEntrega: item.direccionEntrega

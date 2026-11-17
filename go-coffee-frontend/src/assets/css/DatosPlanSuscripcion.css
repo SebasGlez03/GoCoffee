@@ -1,0 +1,18 @@
+.gc-plan-suscripcion {
+  margin: 1.25rem 0;
+  padding: 1.25rem;
+  border: 1px solid var(--color-border);
+  border-radius: 0.75rem;
+  background: var(--color-latte);
+  overflow-wrap: anywhere;
+}
+
+.gc-plan-suscripcion h3 { color: var(--color-espresso); font-size: 1.15rem; }
+.gc-plan-suscripcion dl {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 150px), 1fr));
+  gap: 1rem;
+  margin-top: 1rem;
+}
+.gc-plan-suscripcion dt { color: var(--color-mocha); font-size: 0.85rem; }
+.gc-plan-suscripcion dd { font-weight: 600; }

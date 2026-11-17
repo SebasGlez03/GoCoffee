@@ -37,7 +37,7 @@ describe('Programación de ciclos', () => {
     const { tx, servicio, cliente } = preparar(estado);
     await servicio.sincronizar(cliente, 1);
     expect(tx.ciclo.create).not.toHaveBeenCalled();
-    if (estado === 'CANCELADA') expect(tx.entrega.updateMany).toHaveBeenCalled();
+    if (estado === 'CANCELADA') expect(tx.ciclo.update).not.toHaveBeenCalled();
   });
   it('no duplica un ciclo futuro', async () => {
     const { tx, servicio, cliente } = preparar('ACTIVA', [{ numCiclo: 1, fechaProgramada: new Date('2026-11-20') }]);

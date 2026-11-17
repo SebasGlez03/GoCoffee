@@ -38,6 +38,13 @@ export interface Sesion {
 }
 
 export interface Suscripcion extends Omit<CrearSuscripcion, 'planId'> {
+  plan: Pick<Plan, 'idPlan' | 'nombre' | 'cantidadBolsas' | 'precio' | 'frecuenciaEntrega'> | null;
+  ultimaEntregaPagada: {
+    idEntrega: number;
+    numCiclo: number;
+    fechaProgramada: string;
+    estadoEntrega: 'PROGRAMADA' | 'SALTADA' | 'ARMADA' | 'ENVIADA' | 'ENTREGADA';
+  } | null;
   ciclos: unknown[];
   id: number;
   usuarioId: number | null;
