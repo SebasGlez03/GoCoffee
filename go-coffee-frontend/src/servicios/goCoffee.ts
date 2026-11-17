@@ -15,3 +15,9 @@ export async function subscribirse(datos: CrearSuscripcion): Promise<Suscripcion
   const respuesta = await api.post<Sobre<Suscripcion>>('/suscripciones', datos);
   return respuesta.data.data;
 }
+
+// El backend identifica al usuario mediante el token de la sesión.
+export async function traerSuscripciones(): Promise<Suscripcion[]> {
+  const respuesta = await api.get<Sobre<Suscripcion[]>>('/suscripciones');
+  return respuesta.data.data;
+}
